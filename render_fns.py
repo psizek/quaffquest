@@ -1,7 +1,18 @@
-import tcod as libtcod
+import tcod
 
-def render_all(root_con, con, entities, screen_width, screen_height):
-    """Draw all entities in the list"""
+def render_all(root_con, con, entities, game_map, screen_width, screen_height, colors):
+    """Render characters on the console screen"""
+    #render tiles
+    for y in range(game_map.height):
+        for x in range(game_map.width):
+            wall = game_map.tiles[x][y].block_sight
+
+            if wall:
+                tcod.console_set_char_background(con, x, y, colors.get('dark_wall'), tcod.BKGND_SET)
+            else:
+                tcod.console_set_char_background(con, x, y, colors.get('dark_ground'), tcod.BKGND_SET)
+
+    #render entities
     for entity in entities:
         draw_entity(root_con, con, entity)
     con.blit(root_con, 0, 0, 0, 0, screen_width, screen_height)
@@ -12,8 +23,8 @@ def clear_all(root_con, con, entities):
 
 def draw_entity(root_con, con, entity):
     con.default_fg = entity.color
-    libtcod.console_put_char(con, entity.x, entity.y, entity.char, libtcod.BKGND_NONE)
+    tcod.console_put_char(con, entity.x, entity.y, entity.char, tcod.BKGND_NONE)
 
 def clear_entity(con, entity):
     """erase character representing object"""
-    libtcod.console_put_char(con, entity.x, entity.y, ' ', libtcod.BKGND_NONE)
+    tcod.console_put_char(con, entity.x, entity.y, ' ', tcod.BKGND_NONE)

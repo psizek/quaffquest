@@ -2,12 +2,21 @@ import tcod
 import tcod.event
 
 from input_handlers import handle_keys
-from entity import Entity
 from render_fns import clear_all, render_all
+
+from entity import Entity
+from map_objects.game_map import GameMap
 
 def main():
     screen_width = 80
     screen_height = 50
+    map_width = 80
+    map_height = 45
+
+    colors = {
+            'dark_wall': tcod.Color(0, 0, 100),
+            'dark_ground': tcod.Color(50, 50, 150)
+            }
 
     player = Entity(int(screen_width/2), int(screen_height/2), '@', tcod.white)
 
@@ -19,6 +28,8 @@ def main():
 
         con = tcod.console.Console(screen_width, screen_height)
 
+        game_map = GameMap(map_width, map_height)
+
         #game loop
         while True:
             for event in tcod.event.wait():
@@ -28,7 +39,7 @@ def main():
                 if event.type == 'KEYDOWN':
                     action = handle_keys(event)
 
-                render_all(root_con, con, entities, screen_width, screen_height)
+                render_all(root_con, con, entities, game_map, screen_width, screen_height, colors)
                 tcod.console_flush()
                 clear_all(root_con, con, entities)
 
@@ -46,7 +57,8 @@ def main():
 
                     if move:
                         dx, dy = move
-                        player.move(dx, dy)
+                        if not game_map.is_blocked(player.x + dx, player.y + dy):
+                            player.move(dx, dy)
 
 #https://stackoverflow.com/questions/419163/what-does-if-name-main-do/419185#419185
 #this is actually pretty cool. kudos to the guy who wrote that.
