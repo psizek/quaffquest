@@ -1,8 +1,8 @@
 import tcod
 import tcod.event
 
-from input_handlers import handle_keys
 from render_fns import clear_all, render_all
+from state import State
 
 from entity import Entity
 from map_objects.game_map import GameMap
@@ -31,6 +31,7 @@ def main():
     with tcod.console_init_root(screen_width, screen_height, 'Quaff Quest', False, tcod.RENDERER_SDL2) as root_con:
 
         con = tcod.console.Console(screen_width, screen_height)
+        state = State()
 
         game_map = GameMap(map_width, map_height)
         game_map.make_map(max_rooms, room_min_size, room_max_size, map_width, map_height, player)
@@ -38,21 +39,18 @@ def main():
         #game loop
         while True:
             for event in tcod.event.wait():
-                action = None
-                if event.type == 'QUIT':
-                    raise SystemExit()
-                if event.type == 'KEYDOWN':
-                    action = handle_keys(event)
+                state.action = None
+                state.dispatch(event)
 
                 render_all(root_con, con, entities, game_map, screen_width, screen_height, colors)
                 tcod.console_flush()
                 clear_all(root_con, con, entities)
 
-                if action:
+                if state.action:
 
-                    move = action.get('move')
-                    exit = action.get('exit')
-                    fullscreen = action.get('fullscreen')
+                    move = state.action.get('move')
+                    exit = state.action.get('exit')
+                    fullscreen = state.action.get('fullscreen')
 
                     if exit:
                         return True
@@ -66,6 +64,6 @@ def main():
                             player.move(dx, dy)
 
 #https://stackoverflow.com/questions/419163/what-does-if-name-main-do/419185#419185
-#this is actually pretty cool. kudos to the guy who wrote that.
+#this tidbit is actually pretty cool. kudos to the guy who wrote that.
 if __name__ == '__main__':
     main()
