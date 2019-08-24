@@ -1,48 +1,51 @@
-import tcod as libtcod
+import tcod
+
 from input_handlers import handle_keys
+from entity import Entity
+from render_fns import clear_all, render_all
 
 def main():
-    SCREEN_WIDTH = 80
-    SCREEN_HEIGHT = 50
+    screen_width = 80
+    screen_height = 50
 
-    player_x = int(SCREEN_WIDTH/2)
-    player_y = int(SCREEN_WIDTH/2)
+    player = Entity(int(screen_width/2), int(screen_height/2), '@', tcod.white)
 
-    libtcod.console_set_custom_font('arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    entities = [player]
 
-    libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Quaff Quest', False)
+    tcod.console_set_custom_font('arial10x10.png', tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD)
 
-    con = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT) #creates console window - which console we draw to.
+    with tcod.console_init_root(screen_width, screen_height, 'Quaff Quest', False, tcod.RENDERER_SDL2) as root_con:
 
-    key = libtcod.Key()
-    mouse = libtcod.Mouse()
+        con = tcod.console.Console(screen_width, screen_height)
+        #con = tcod.console_new(screen_width, screen_height) #creates console window - which console we draw to.
 
-    while not libtcod.console_is_window_closed():
-        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
+        key = tcod.Key()
+        mouse = tcod.Mouse()
 
-        libtcod.console_set_default_foreground(con, libtcod.white)
-        libtcod.console_put_char(con, player_x, player_y, '@', libtcod.BKGND_NONE)
-        libtcod.console_blit(con, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0)
-        libtcod.console_flush()
-        
-        libtcod.console_put_char(con, player_x, player_y, ' ', libtcod.BKGND_NONE)
+        #game loop
+        while not tcod.console_is_window_closed():
+            tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS, key, mouse)
 
-        action = handle_keys(key)
+            render_all(root_con, con, entities, screen_width, screen_height)
+            tcod.console_flush()
+            
+            clear_all(root_con, con, entities)
 
-        move = action.get('move')
-        exit = action.get('exit')
-        fullscreen = action.get('fullscreen')
+            action = handle_keys(key)
 
-        if exit:
-            return True
+            move = action.get('move')
+            exit = action.get('exit')
+            fullscreen = action.get('fullscreen')
 
-        if fullscreen:
-            libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
+            if exit:
+                return True
 
-        if move:
-            dx, dy = move
-            player_x += dx
-            player_y += dy
+            if fullscreen:
+                tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
+
+            if move:
+                dx, dy = move
+                player.move(dx, dy)
 
 #https://stackoverflow.com/questions/419163/what-does-if-name-main-do/419185#419185
 #this is actually pretty cool. kudos to the guy who wrote that.
