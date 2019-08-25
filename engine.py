@@ -5,9 +5,10 @@ import tcod.map
 from render_fns import clear_all, render_all
 from state import State
 
-from entity import Entity
+from entity import Entity, get_blocking_entities_at_location
 from map_objects.game_map import GameMap
 from fov_fns import initialize_fov
+from game_states import GameStates
 
 def main():
     screen_width = 80
@@ -23,6 +24,8 @@ def main():
     fov_light_walls = True
     fov_radius = 10
 
+    max_monsters_per_room = 3
+
     colors = {
             'dark_wall': tcod.Color(0, 0, 100),
             'dark_ground': tcod.Color(50, 50, 150),
@@ -30,10 +33,9 @@ def main():
             'light_ground': tcod.Color(200, 180, 50)
             }
 
-    player = Entity(int(screen_width/2), int(screen_height/2), '@', tcod.white)
-    npc = Entity(int(screen_width/2), int(screen_height/2), '@', tcod.yellow)
+    player = Entity(0, 0, '@', tcod.white, 'Player', blocks=True)
 
-    entities = [player, npc]
+    entities = [player]
 
     tcod.console_set_custom_font('arial10x10.png', tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD)
 
@@ -43,10 +45,12 @@ def main():
         state = State()
 
         game_map = GameMap(map_width, map_height)
-        game_map.make_map(max_rooms, room_min_size, room_max_size, map_width, map_height, player)
+        game_map.make_map(max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities, max_monsters_per_room)
 
         fov_recompute = True
         fov_map = initialize_fov(game_map)
+
+        game_state = GameStates.PLAYERS_TURN
 
         #game loop
         while True:
@@ -73,12 +77,25 @@ def main():
 
                     if fullscreen:
                         tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
+                    if game_state == GameStates.ENEMY_TURN:
+                        for entity in entities:
+                            if entity != player:
+                                print(f'The {entity.name} ponders the meaning of its existence')
+                        game_state = GameStates.PLAYERS_TURN
 
-                    if move:
+                    if move and game_state == GameStates.PLAYERS_TURN:
                         dx, dy = move
-                        if not game_map.is_blocked(player.x + dx, player.y + dy):
-                            player.move(dx, dy)
-                            fov_recompute = True
+                        destination_x = player.x + dx
+                        destination_y = player.y + dy
+                        if not game_map.is_blocked(destination_x, destination_y):
+                            target = get_blocking_entities_at_location(entities, destination_x, destination_y)
+
+                            if target:
+                                print(f'You kick the {target.name} in the shins, much to its annoyance!')
+                            else:
+                                player.move(dx, dy)
+                                fov_recompute = True
+                            game_state = GameStates.ENEMY_TURN
 
 #https://stackoverflow.com/questions/419163/what-does-if-name-main-do/419185#419185
 #this tidbit is actually pretty cool. kudos to the guy who wrote that.
