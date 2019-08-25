@@ -1,4 +1,6 @@
 import math
+import tcod
+import numpy as np
 
 class Entity:
     """
@@ -34,6 +36,22 @@ class Entity:
 
         if not (game_map.is_blocked(self.x + dx, self.y + dy) or get_blocking_entities_at_location(entities, self.x + dx, self.y + dy)):
                 self.move(dx, dy)
+
+    def move_astar(self, target, entities, game_map):
+        dungeon = np.empty((game_map.width, game_map.height), dtype=np.int8)
+        for x in range(game_map.width):
+            for y in range(game_map.height):
+                dungeon[x,y] = (0 if game_map.tiles[x][y].blocked else 1)
+
+        astar = tcod.path.AStar(dungeon) #defaults diagonal to 1.41
+
+        path = astar.get_path(self.x, self.y, target.x, target.y)
+
+        if len(path) > 0 and len(path) < 25:
+            x, y = path[0]
+            if x or y:
+                self.x = x
+                self.y = y
 
     def distance_to(self, other):
         dx = other.x - self.x
