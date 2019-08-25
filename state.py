@@ -23,6 +23,15 @@ class State(tcod.event.EventDispatch):
             self.action = {'move': (-1, 0)}
         elif key == tcod.event.K_l or key == tcod.event.K_RIGHT:
             self.action = {'move': (1, 0)}
+        elif key == tcod.event.K_y:
+            self.action = {'move': (-1, -1)}
+        elif key == tcod.event.K_u:
+            self.action = {'move': (1, -1)}
+        elif key == tcod.event.K_b:
+            self.action = {'move': (-1, 1)}
+        elif key == tcod.event.K_n:
+            self.action = {'move': (1, 1)}
+
 
         if key == tcod.event.K_RETURN and ((tcod.event.KMOD_LALT | tcod.event.KMOD_RALT) & event.mod):
             self.action = {'fullscreen': True}
