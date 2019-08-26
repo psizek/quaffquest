@@ -2,17 +2,20 @@ import math
 import tcod
 import numpy as np
 
+from render_fns import RenderOrder
+
 class Entity:
     """
     A generic object to represent players, enemies, items, etc.
     """
-    def __init__(self, x, y, char, color, name, blocks=False, fighter=None, ai=None):
+    def __init__(self, x, y, char, color, name, blocks=False, render_order=RenderOrder.CORPSE, fighter=None, ai=None):
         self.x = x
         self.y = y
         self.char = char
         self.color = color
         self.name = name
         self.blocks = blocks
+        self.render_order = render_order
         self.fighter = fighter
         self.ai = ai
         
@@ -42,6 +45,10 @@ class Entity:
         for x in range(game_map.width):
             for y in range(game_map.height):
                 dungeon[x,y] = (0 if game_map.tiles[x][y].blocked else 1)
+
+        for entity in entities:
+            if entity.blocks and entity != self and entity != target:
+                dungeon[entity.x, entity.y] = 0
 
         astar = tcod.path.AStar(dungeon) #defaults diagonal to 1.41
 
