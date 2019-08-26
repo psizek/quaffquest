@@ -15,8 +15,13 @@ from game_states import GameStates
 def main():
     screen_width = 80
     screen_height = 50
+
+    bar_width = 20
+    panel_height = 7
+    panel_y = screen_height - panel_height
+
     map_width = 80
-    map_height = 45
+    map_height = 43
 
     room_max_size = 10
     room_min_size = 6
@@ -45,6 +50,8 @@ def main():
     with tcod.console_init_root(screen_width, screen_height, 'Quaff Quest', False, tcod.RENDERER_SDL2) as root_con:
 
         con = tcod.console.Console(screen_width, screen_height)
+        panel = tcod.console.Console(screen_width, panel_height)
+
         state = State()
 
         game_map = GameMap(map_width, map_height)
@@ -64,7 +71,7 @@ def main():
                 if fov_recompute:
                     fov_map.compute_fov(player.x, player.y, fov_radius, fov_light_walls, fov_algorithm)
 
-                render_all(root_con, con, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
+                render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, bar_width, panel_y, colors)
                 fov_recompute = False
                 tcod.console_flush()
                 clear_all(root_con, con, entities)
