@@ -78,7 +78,7 @@ def main():
                 if fov_recompute:
                     fov_map.compute_fov(player.x, player.y, fov_radius, fov_light_walls, fov_algorithm)
 
-                render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, colors)
+                render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, state.mouse_pos, colors)
                 fov_recompute = False
                 tcod.console_flush()
                 clear_all(root_con, con, entities)

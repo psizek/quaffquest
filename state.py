@@ -5,6 +5,7 @@ class State(tcod.event.EventDispatch):
 
     def __init__(self):
         self.action = None
+        self.mouse_pos = tcod.event.Point(0, 0)
 
     def ev_quit(self, event):
         raise SystemExit()
@@ -32,6 +33,8 @@ class State(tcod.event.EventDispatch):
         elif key == tcod.event.K_n:
             self.action = {'move': (1, 1)}
 
-
         if key == tcod.event.K_RETURN and ((tcod.event.KMOD_LALT | tcod.event.KMOD_RALT) & event.mod):
             self.action = {'fullscreen': True}
+    
+    def ev_mousemotion(self, event):
+        self.mouse_pos = event.tile

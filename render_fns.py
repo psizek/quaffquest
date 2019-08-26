@@ -7,6 +7,12 @@ class RenderOrder(Enum):
     ITEM = 2
     ACTOR = 3
 
+def get_names_under_mouse(mouse_pos, entities, fov_map):
+    names = [entity.name for entity in entities if entity.x == mouse_pos.x and entity.y == mouse_pos.y and fov_map.fov[entity.y, entity.x] == True]
+    names = ', '.join(names)
+
+    return names.capitalize()
+
 def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_color):
     bar_width = int(float(value) / maximum * total_width)
 
@@ -18,7 +24,7 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
     panel.default_fg = tcod.white
     panel.print(int(x + total_width/2), y, '{0}: {1}/{2}'.format(name, value, maximum), None, None, 1, tcod.CENTER)
 
-def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, colors):
+def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, mouse_pos, colors):
     """Render characters on the console screen"""
     #render tiles
     if fov_recompute:
@@ -55,6 +61,8 @@ def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_re
         y += 1
 
     render_bar(panel, 1, 1, bar_width, 'HP', player.fighter.hp, player.fighter.max_hp, tcod.light_red, tcod.darker_red)
+
+    panel.print(1, 0, get_names_under_mouse(mouse_pos, entities, fov_map), tcod.light_gray)
 
     panel.blit(root_con, 0, panel_y)
 
