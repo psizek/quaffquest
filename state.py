@@ -1,20 +1,59 @@
 import tcod
 import tcod.event
 
-class State(tcod.event.EventDispatch):
+from game_states import GameStates
+from typing import Any
 
+class Event_State_Manager:
+    def __init__(self):
+        self.play_state = Play_State()
+        self.inv_state = Inv_State()
+        self.dead_state = Dead_State()
+
+        self.action = None
+        self.mouse_pos = None
+
+    def run_state(self, game_state, event):
+        self.action = None
+        if game_state == GameStates.SHOW_INVENTORY:
+            self.inv_state.dispatch(event)
+            self.action = self.inv_state.action
+        elif game_state == GameStates.PLAYER_DEAD:
+            self.dead_state.dispatch(event)
+            self.action = self.dead_state.action
+        else:
+            self.play_state.dispatch(event)
+            self.action = self.play_state.action
+            self.mouse_pos = self.play_state.mouse_pos
+
+
+class Generic_State(tcod.event.EventDispatch):
     def __init__(self):
         self.action = None
-        self.mouse_pos = tcod.event.Point(0, 0)
+
+    def dispatch(self, event: Any) -> None:
+        self.action = None
+        super().dispatch(event)
 
     def ev_quit(self, event):
         raise SystemExit()
-
+    
     def ev_keydown(self, event):
         key = event.sym
 
-        if key == tcod.event.K_ESCAPE:
+        if key == tcod.event.K_RETURN and ((tcod.event.KMOD_LALT | tcod.event.KMOD_RALT) & event.mod):
+            self.action = {'fullscreen': True}
+        elif key == tcod.event.K_ESCAPE:
             self.action = {'exit': True}
+
+class Play_State(Generic_State):
+
+    def __init__(self):
+        self.mouse_pos = tcod.event.Point(0, 0)
+        super().__init__()
+
+    def ev_keydown(self, event):
+        key = event.sym
 
         if key == tcod.event.K_k or key == tcod.event.K_UP:
             self.action = {'move': (0, -1)}
@@ -38,8 +77,30 @@ class State(tcod.event.EventDispatch):
         elif key == tcod.event.K_i:
             self.action = {'show_inventory': True}
 
-        if key == tcod.event.K_RETURN and ((tcod.event.KMOD_LALT | tcod.event.KMOD_RALT) & event.mod):
-            self.action = {'fullscreen': True}
+        super().ev_keydown(event)
     
     def ev_mousemotion(self, event):
+        self.action = None
         self.mouse_pos = event.tile
+
+class Dead_State(Generic_State):
+    def ev_keydown(self, event):
+        key = event.sym
+
+        if key == tcod.event.K_i:
+            self.action = {'show_inventory': True}
+        
+        super().ev_keydown(event)
+
+class Inv_State(Generic_State):
+    def __init__(self):
+        self.action = None
+        self.mouse_pos = tcod.event.Point(0, 0)
+
+    def ev_keydown(self, event):
+        key = event.sym
+        index = key - ord('a')
+
+        if index >= 0:
+            self.action = {'inventory_index': index}
+        super().ev_keydown(event)

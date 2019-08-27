@@ -3,7 +3,7 @@ import tcod.event
 import tcod.map
 
 from render_fns import clear_all, render_all, RenderOrder
-from state import State
+from state import Event_State_Manager
 
 from components.fighter import Fighter
 from components.inventory import Inventory
@@ -60,8 +60,6 @@ def main():
         con = tcod.console.Console(screen_width, screen_height)
         panel = tcod.console.Console(screen_width, panel_height)
 
-        state = State()
-
         game_map = GameMap(map_width, map_height)
         game_map.make_map(max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities, max_monsters_per_room, max_items_per_room)
 
@@ -73,11 +71,12 @@ def main():
         game_state = GameStates.PLAYERS_TURN
         previous_game_state = game_state
 
+        state = Event_State_Manager()
+
         #game loop
         while True:
             for event in tcod.event.wait():
-                state.action = None
-                state.dispatch(event)
+                state.run_state(game_state, event)
 
                 if fov_recompute:
                     fov_map.compute_fov(player.x, player.y, fov_radius, fov_light_walls, fov_algorithm)
@@ -92,6 +91,7 @@ def main():
                     move = state.action.get('move')
                     pickup = state.action.get('pickup')
                     show_inventory = state.action.get('show_inventory')
+                    inventory_index = state.action.get('inventory_index')
                     exit = state.action.get('exit')
                     fullscreen = state.action.get('fullscreen')
 
@@ -132,8 +132,12 @@ def main():
                             message_log.add_message(Message('There is nothing here to pick up.', tcod.yellow))
 
                     if show_inventory:
-                        previous_bame_state = game_state
+                        previous_game_state = game_state
                         game_state = GameStates.SHOW_INVENTORY
+
+                    if inventory_index is not None and previous_game_state != GameStates.PLAYER_DEAD and inventory_index < len(player.inventory.items):
+                        item = player.inventory.items[inventory_index]
+                        print(item)
 
 
                     for player_turn_result in player_turn_results:
