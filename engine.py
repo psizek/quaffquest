@@ -71,6 +71,7 @@ def main():
         message_log = MessageLog(message_x, message_width, message_height)
 
         game_state = GameStates.PLAYERS_TURN
+        previous_game_state = game_state
 
         #game loop
         while True:
@@ -81,7 +82,7 @@ def main():
                 if fov_recompute:
                     fov_map.compute_fov(player.x, player.y, fov_radius, fov_light_walls, fov_algorithm)
 
-                render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, state.mouse_pos, colors)
+                render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, state.mouse_pos, colors, game_state)
                 fov_recompute = False
                 tcod.console_flush()
                 clear_all(con, entities)
@@ -90,13 +91,18 @@ def main():
 
                     move = state.action.get('move')
                     pickup = state.action.get('pickup')
+                    show_inventory = state.action.get('show_inventory')
                     exit = state.action.get('exit')
                     fullscreen = state.action.get('fullscreen')
 
                     player_turn_results = []
 
+
                     if exit:
-                        return True
+                        if game_state == GameStates.SHOW_INVENTORY:
+                            game_state = previous_game_state
+                        else:
+                            return True
 
                     if fullscreen:
                         tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
@@ -124,6 +130,11 @@ def main():
                                 break
                         else:
                             message_log.add_message(Message('There is nothing here to pick up.', tcod.yellow))
+
+                    if show_inventory:
+                        previous_bame_state = game_state
+                        game_state = GameStates.SHOW_INVENTORY
+
 
                     for player_turn_result in player_turn_results:
                         message = player_turn_result.get('message')

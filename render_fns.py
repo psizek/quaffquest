@@ -1,6 +1,8 @@
 import tcod
 
 from enum import Enum
+from game_states import GameStates
+from menu import inventory_menu
 
 class RenderOrder(Enum):
     CORPSE = 1
@@ -24,12 +26,15 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
     panel.default_fg = tcod.white
     panel.print(int(x + total_width/2), y, '{0}: {1}/{2}'.format(name, value, maximum), None, None, 1, tcod.CENTER)
 
-def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, mouse_pos, colors):
+def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, mouse_pos, colors, game_state):
     """Render characters on the console screen"""
     render_main_map(con, entities, player, game_map, fov_map, fov_recompute, colors)
     con.blit(root_con)
     render_panel(panel, message_log, bar_width, player, mouse_pos, entities, fov_map)
     panel.blit(root_con, 0, panel_y)
+
+    if game_state == GameStates.SHOW_INVENTORY:
+        inventory_menu(root_con, 'Press the key next to an item to use it, or Esc to cancel.\n', player.inventory, 50)
 
 def render_main_map(con, entities, player, game_map, fov_map, fov_recompute, colors):
     #render tiles
