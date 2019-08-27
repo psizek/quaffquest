@@ -26,6 +26,12 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
 
 def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, mouse_pos, colors):
     """Render characters on the console screen"""
+    render_main_map(con, entities, player, game_map, fov_map, fov_recompute, colors)
+    con.blit(root_con)
+    render_panel(panel, message_log, bar_width, player, mouse_pos, entities, fov_map)
+    panel.blit(root_con, 0, panel_y)
+
+def render_main_map(con, entities, player, game_map, fov_map, fov_recompute, colors):
     #render tiles
     if fov_recompute:
         for y in range(game_map.height):
@@ -48,10 +54,9 @@ def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_re
 
     #render entities
     for entity in entities_in_render_order:
-        draw_entity(root_con, con, entity, fov_map)
+        draw_entity(con, entity, fov_map)
 
-    con.blit(root_con)
-
+def render_panel(panel, message_log, bar_width, player, mouse_pos, entities, fov_map):
     panel.default_bg = tcod.black
     panel.clear()
 
@@ -64,13 +69,11 @@ def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_re
 
     panel.print(1, 0, get_names_under_mouse(mouse_pos, entities, fov_map), tcod.light_gray)
 
-    panel.blit(root_con, 0, panel_y)
-
-def clear_all(root_con, con, entities):
+def clear_all(con, entities):
     for entity in entities:
         clear_entity(con, entity)
 
-def draw_entity(root_con, con, entity, fov_map):
+def draw_entity(con, entity, fov_map):
     if fov_map.fov[entity.y][entity.x]:
         con.default_fg = entity.color
         tcod.console_put_char(con, entity.x, entity.y, entity.char, tcod.BKGND_NONE)

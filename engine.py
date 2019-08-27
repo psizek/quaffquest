@@ -84,7 +84,7 @@ def main():
                 render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, state.mouse_pos, colors)
                 fov_recompute = False
                 tcod.console_flush()
-                clear_all(root_con, con, entities)
+                clear_all(con, entities)
 
                 if state.action:
 
