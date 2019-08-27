@@ -33,6 +33,9 @@ class State(tcod.event.EventDispatch):
         elif key == tcod.event.K_n:
             self.action = {'move': (1, 1)}
 
+        if key == tcod.event.K_g:
+            self.action = {'pickup': True}
+
         if key == tcod.event.K_RETURN and ((tcod.event.KMOD_LALT | tcod.event.KMOD_RALT) & event.mod):
             self.action = {'fullscreen': True}
     
