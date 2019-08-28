@@ -41,9 +41,12 @@ def render_all(root_con: tcod.console.Console, con: tcod.console.Console, panel:
                  player, mouse_pos, entities, fov_map)
     panel.blit(root_con, 0, panel_y)
 
-    if game_state == GameStates.SHOW_INVENTORY:
-        inventory_menu(
-            root_con, 'Press the key next to an item to use it, or Esc to cancel.\n', player.inventory, 50)
+    if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
+        if game_state == GameStates.SHOW_INVENTORY:
+            inventory_title = 'Press the key next to an item to use it, or Esc to cancel.\n'
+        else:
+            inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
+        inventory_menu(root_con, inventory_title, player.inventory, 50)
 
 
 def render_main_map(con, entities, player, game_map, fov_map, fov_recompute, colors):

@@ -16,7 +16,7 @@ class Event_State_Manager:
 
     def run_state(self, game_state, event):
         self.action = None
-        if game_state == GameStates.SHOW_INVENTORY:
+        if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
             self.inv_state.dispatch(event)
             self.action = self.inv_state.action
         elif game_state == GameStates.PLAYER_DEAD:
@@ -78,6 +78,8 @@ class Play_State(Generic_State):
             self.action = {'pickup': True}
         elif key == tcod.event.K_i:
             self.action = {'show_inventory': True}
+        elif key == tcod.event.K_d:
+            self.action = {'drop_inventory': True}
 
         super().ev_keydown(event)
 
