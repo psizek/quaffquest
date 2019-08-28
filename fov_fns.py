@@ -1,5 +1,6 @@
 import tcod.map
 
+
 def initialize_fov(game_map):
     fov_map = tcod.map.Map(game_map.width, game_map.height)
 
@@ -9,4 +10,3 @@ def initialize_fov(game_map):
             fov_map.walkable[y][x] = not game_map.tiles[x][y].blocked
 
     return fov_map
-

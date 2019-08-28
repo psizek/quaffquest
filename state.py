@@ -4,6 +4,7 @@ import tcod.event
 from game_states import GameStates
 from typing import Any
 
+
 class Event_State_Manager:
     def __init__(self):
         self.play_state = Play_State()
@@ -37,7 +38,7 @@ class Generic_State(tcod.event.EventDispatch):
 
     def ev_quit(self, event):
         raise SystemExit()
-    
+
     def ev_keydown(self, event):
         key = event.sym
 
@@ -45,6 +46,7 @@ class Generic_State(tcod.event.EventDispatch):
             self.action = {'fullscreen': True}
         elif key == tcod.event.K_ESCAPE:
             self.action = {'exit': True}
+
 
 class Play_State(Generic_State):
 
@@ -78,10 +80,11 @@ class Play_State(Generic_State):
             self.action = {'show_inventory': True}
 
         super().ev_keydown(event)
-    
+
     def ev_mousemotion(self, event):
         self.action = None
         self.mouse_pos = event.tile
+
 
 class Dead_State(Generic_State):
     def ev_keydown(self, event):
@@ -89,8 +92,9 @@ class Dead_State(Generic_State):
 
         if key == tcod.event.K_i:
             self.action = {'show_inventory': True}
-        
+
         super().ev_keydown(event)
+
 
 class Inv_State(Generic_State):
     def __init__(self):

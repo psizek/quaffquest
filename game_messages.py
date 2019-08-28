@@ -4,6 +4,7 @@ import textwrap
 
 from typing import List
 
+
 class Message:
     def __init__(self, text: str, color=tcod.white):
         self.text = text

@@ -1,5 +1,6 @@
 from typing import Tuple
 
+
 class Rect:
     def __init__(self, x: int, y: int, w: int, h: int):
         """x and y are the top left corner"""

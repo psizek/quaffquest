@@ -1,15 +1,18 @@
 import tcod
 
-def menu(root_con, header: str, options, width: int):
-    if len(options) > 26: raise ValueError('Cannot have a menu with more than 26 options.')
 
-    header_height = root_con.get_height_rect(0, 0, width, root_con.height, header)
+def menu(root_con, header: str, options, width: int):
+    if len(options) > 26:
+        raise ValueError('Cannot have a menu with more than 26 options.')
+
+    header_height = root_con.get_height_rect(
+        0, 0, width, root_con.height, header)
     height = len(options) + header_height
 
     window = tcod.console.Console(width, height)
 
     window.print_box(0, 0, width, height, header, tcod.white)
-    
+
     y: int = header_height
     letter_index = ord('a')
     for option_text in options:
@@ -19,8 +22,9 @@ def menu(root_con, header: str, options, width: int):
         letter_index += 1
 
     x: int = int((root_con.width - width) / 2)
-    y: int = int((root_con.height - height) /2)
+    y: int = int((root_con.height - height) / 2)
     window.blit(root_con, x, y, 0, 0, width, height, 1.0, 0.7)
+
 
 def inventory_menu(root_con, header: str, inventory, inventory_width):
     """show a menu with each item of the inventory as an option"""

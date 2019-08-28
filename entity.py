@@ -4,10 +4,10 @@ import numpy as np
 
 from render_fns import RenderOrder
 
+
 class Entity:
-    """
-    A generic object to represent players, enemies, items, etc.
-    """
+    """ A generic object to represent players, enemies, items, etc. """
+
     def __init__(self, x: int, y: int, char, color, name, blocks: bool = False, render_order=RenderOrder.CORPSE, fighter=None, ai=None, item=None, inventory=None):
         self.x = x
         self.y = y
@@ -20,7 +20,7 @@ class Entity:
         self.ai = ai
         self.item = item
         self.inventory = inventory
-        
+
         if self.fighter:
             self.fighter.owner = self
         if self.ai:
@@ -44,19 +44,19 @@ class Entity:
         dy = int(round(dy / distance))
 
         if not (game_map.is_blocked(self.x + dx, self.y + dy) or get_blocking_entities_at_location(entities, self.x + dx, self.y + dy)):
-                self.move(dx, dy)
+            self.move(dx, dy)
 
     def move_astar(self, target, entities, game_map):
         dungeon = np.empty((game_map.width, game_map.height), dtype=np.int8)
         for x in range(game_map.width):
             for y in range(game_map.height):
-                dungeon[x,y] = (0 if game_map.tiles[x][y].blocked else 1)
+                dungeon[x, y] = (0 if game_map.tiles[x][y].blocked else 1)
 
         for entity in entities:
             if entity.blocks and entity != self and entity != target:
                 dungeon[entity.x, entity.y] = 0
 
-        astar = tcod.path.AStar(dungeon) #defaults diagonal to 1.41
+        astar = tcod.path.AStar(dungeon)  # defaults diagonal to 1.41
 
         path = astar.get_path(self.x, self.y, target.x, target.y)
 
@@ -70,6 +70,7 @@ class Entity:
         dx = other.x - self.x
         dy = other.y - self.y
         return math.sqrt(dx ** 2 + dy ** 2)
+
 
 def get_blocking_entities_at_location(entities, destination_x: int, destination_y: int):
     for entity in entities:
