@@ -1,4 +1,5 @@
 from random import randint
+from typing import List
 
 import tcod
 
@@ -22,17 +23,17 @@ class GameMap:
 
         return tiles
 
-    def make_map(self, max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities, max_monsters_per_room, max_items_per_room):
-        rooms = []
-        num_rooms = 0
+    def make_map(self, max_rooms: int, room_min_size: int, room_max_size: int, map_width: int, map_height: int, player, entities, max_monsters_per_room: int, max_items_per_room: int):
+        rooms: List[Rect] = []
+        num_rooms: int = 0
 
         for r in range(max_rooms):
-            w = randint(room_min_size, room_max_size)
-            h = randint(room_min_size, room_max_size)
-            x = randint(0, map_width - w - 1)
-            y = randint(0, map_height - h - 1)
+            w: int = randint(room_min_size, room_max_size)
+            h: int = randint(room_min_size, room_max_size)
+            x: int = randint(0, map_width - w - 1)
+            y: int = randint(0, map_height - h - 1)
 
-            new_room = Rect(x, y, w, h)
+            new_room: Rect = Rect(x, y, w, h)
 
             #for-else loop
             for other_room in rooms:
@@ -73,31 +74,31 @@ class GameMap:
                 rooms.append(new_room)
                 num_rooms += 1
 
-    def create_room(self, room):
+    def create_room(self, room: Rect):
         for x in range(room.x1 + 1, room.x2):
             for y in range(room.y1 + 1, room.y2):
                 self.tiles[x][y].blocked = False
                 self.tiles[x][y].block_sight = False
 
-    def create_h_tunnel(self, x1, x2, y):
+    def create_h_tunnel(self, x1: int, x2: int, y: int):
         for x in range(min(x1, x2), max(x1, x2) + 1):
             self.tiles[x][y].blocked = False
             self.tiles[x][y].block_sight = False
 
-    def create_v_tunnel(self, y1, y2, x):
+    def create_v_tunnel(self, y1: int, y2: int, x: int):
         for y in range(min(y1, y2), max(y1, y2) + 1):
             self.tiles[x][y].blocked = False
             self.tiles[x][y].block_sight = False
 
-    def place_entities(self, room, entities, max_monsters_per_room, max_items_per_room):
+    def place_entities(self, room: Rect, entities, max_monsters_per_room: int, max_items_per_room: int):
         # Get a random number of monsters
         number_of_monsters = randint(0, max_monsters_per_room)
         number_of_items = randint(0, max_items_per_room)
 
         for i in range(number_of_monsters):
             # Choose a random location in the room
-            x = randint(room.x1 + 1, room.x2 - 1)
-            y = randint(room.y1 + 1, room.y2 - 1)
+            x: int = randint(room.x1 + 1, room.x2 - 1)
+            y: int = randint(room.y1 + 1, room.y2 - 1)
 
             if not any([entity for entity in entities if entity.x == x and entity.y == y]):
                 if randint(0, 100) < 80:
@@ -111,12 +112,12 @@ class GameMap:
                 entities.append(monster)
         
         for i in range(number_of_items):
-            x = randint(room.x1 + 1, room.x2 - 1)
-            y = randint(room.y1 + 1, room.y2 - 1)
+            x: int = randint(room.x1 + 1, room.x2 - 1)
+            y: int = randint(room.y1 + 1, room.y2 - 1)
 
             if not any([entity for entity in entities if entity.x == x and entity.y == y]):
                 item = Entity(x, y, '!', tcod.violet, 'Healing Potion', render_order=RenderOrder.ITEM, item=Item())
                 entities.append(item)
 
-    def is_blocked(self, x, y):
+    def is_blocked(self, x: int, y: int):
         return (self.tiles[x][y].blocked)

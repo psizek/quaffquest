@@ -8,7 +8,7 @@ class Entity:
     """
     A generic object to represent players, enemies, items, etc.
     """
-    def __init__(self, x, y, char, color, name, blocks=False, render_order=RenderOrder.CORPSE, fighter=None, ai=None, item=None, inventory=None):
+    def __init__(self, x: int, y: int, char, color, name, blocks: bool = False, render_order=RenderOrder.CORPSE, fighter=None, ai=None, item=None, inventory=None):
         self.x = x
         self.y = y
         self.char = char
@@ -35,7 +35,7 @@ class Entity:
         self.x += dx
         self.y += dy
 
-    def move_towards(self, target_x, target_y, game_map, entities):
+    def move_towards(self, target_x: int, target_y: int, game_map, entities):
         dx = target_x - self.x
         dy = target_y - self.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
@@ -71,7 +71,7 @@ class Entity:
         dy = other.y - self.y
         return math.sqrt(dx ** 2 + dy ** 2)
 
-def get_blocking_entities_at_location(entities, destination_x, destination_y):
+def get_blocking_entities_at_location(entities, destination_x: int, destination_y: int):
     for entity in entities:
         if entity.x == destination_x and entity.y == destination_y and entity.blocks:
             return entity

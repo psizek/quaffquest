@@ -2,21 +2,22 @@ import tcod
 
 import textwrap
 
+from typing import List
 
 class Message:
-    def __init__(self, text, color=tcod.white):
+    def __init__(self, text: str, color=tcod.white):
         self.text = text
         self.color = color
 
 
 class MessageLog:
-    def __init__(self, x, width, height):
-        self.messages = []
+    def __init__(self, x: int, width: int, height: int):
+        self.messages: List[Message] = []
         self.x = x
         self.width = width
         self.height = height
 
-    def add_message(self, message):
+    def add_message(self, message: Message):
         # Split the message if necessary, among multiple lines
         new_msg_lines = textwrap.wrap(message.text, self.width)
 

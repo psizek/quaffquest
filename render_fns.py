@@ -15,7 +15,7 @@ def get_names_under_mouse(mouse_pos, entities, fov_map):
 
     return names.capitalize()
 
-def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_color):
+def render_bar(panel: tcod.console.Console, x: int, y: int, total_width: int, name, value, maximum, bar_color, back_color):
     bar_width = int(float(value) / maximum * total_width)
 
     panel.draw_rect(x, y, total_width, 1, 0, None, back_color)
@@ -26,7 +26,7 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
     panel.default_fg = tcod.white
     panel.print(int(x + total_width/2), y, '{0}: {1}/{2}'.format(name, value, maximum), None, None, 1, tcod.CENTER)
 
-def render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, bar_width, panel_y, mouse_pos, colors, game_state):
+def render_all(root_con: tcod.console.Console, con: tcod.console.Console, panel: tcod.console.Console, entities, player, game_map, fov_map, fov_recompute: bool, message_log, bar_width, panel_y: int, mouse_pos, colors, game_state: GameStates):
     """Render characters on the console screen"""
     render_main_map(con, entities, player, game_map, fov_map, fov_recompute, colors)
     con.blit(root_con)
@@ -41,8 +41,8 @@ def render_main_map(con, entities, player, game_map, fov_map, fov_recompute, col
     if fov_recompute:
         for y in range(game_map.height):
             for x in range(game_map.width):
-                visible = fov_map.fov[y][x]
-                wall = game_map.tiles[x][y].block_sight
+                visible: bool = fov_map.fov[y][x]
+                wall: bool = game_map.tiles[x][y].block_sight
 
                 if visible:
                     if wall:
@@ -65,7 +65,7 @@ def render_panel(panel, message_log, bar_width, player, mouse_pos, entities, fov
     panel.default_bg = tcod.black
     panel.clear()
 
-    y = 1
+    y: int = 1
     for message in message_log.messages:
         panel.print(message_log.x, y, message.text, message.color)
         y += 1
@@ -74,15 +74,15 @@ def render_panel(panel, message_log, bar_width, player, mouse_pos, entities, fov
 
     panel.print(1, 0, get_names_under_mouse(mouse_pos, entities, fov_map), tcod.light_gray)
 
-def clear_all(con, entities):
+def clear_all(con: tcod.console.Console, entities):
     for entity in entities:
         clear_entity(con, entity)
 
-def draw_entity(con, entity, fov_map):
+def draw_entity(con: tcod.console.Console, entity, fov_map):
     if fov_map.fov[entity.y][entity.x]:
         con.default_fg = entity.color
         tcod.console_put_char(con, entity.x, entity.y, entity.char, tcod.BKGND_NONE)
 
-def clear_entity(con, entity):
+def clear_entity(con: tcod.console.Console, entity):
     """erase character representing object"""
     tcod.console_put_char(con, entity.x, entity.y, ' ', tcod.BKGND_NONE)
