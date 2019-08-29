@@ -27,9 +27,8 @@ def render_bar(panel: tcod.console.Console, x: int, y: int, total_width: int, na
     if bar_width > 0:
         panel.draw_rect(x, y, bar_width, 1, 0, None, bar_color)
 
-    panel.default_fg = tcod.white
     panel.print(int(x + total_width/2), y,
-                '{0}: {1}/{2}'.format(name, value, maximum), None, None, 1, tcod.CENTER)
+                '{0}: {1}/{2}'.format(name, value, maximum), tcod.white, None, 1, tcod.CENTER)
 
 
 def render_all(root_con: tcod.console.Console, con: tcod.console.Console, panel: tcod.console.Console, entities, player, game_map, fov_map, fov_recompute: bool, message_log, bar_width, panel_y: int, mouse_pos, colors, game_state: GameStates):

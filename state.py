@@ -4,6 +4,10 @@ import tcod.event
 from game_states import GameStates
 from typing import Any
 
+#FYI, keys are in tcod.event_constants, so use the next couple lines to grab the source code
+#import inspect
+#print(inspect(tcod.event_constants))
+
 
 class Event_State_Manager:
     def __init__(self):
@@ -73,6 +77,8 @@ class Play_State(Generic_State):
             self.action = {'move': (-1, 1)}
         elif key == tcod.event.K_n:
             self.action = {'move': (1, 1)}
+        elif key == tcod.event.K_PERIOD:
+            self.action = {'rest': True}
 
         if key == tcod.event.K_g:
             self.action = {'pickup': True}

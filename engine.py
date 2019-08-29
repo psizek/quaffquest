@@ -95,6 +95,7 @@ def main():
                 if state.action:
 
                     move = state.action.get('move')
+                    rest = state.action.get('rest')
                     pickup = state.action.get('pickup')
                     show_inventory = state.action.get('show_inventory')
                     drop_inventory = state.action.get('drop_inventory')
@@ -140,6 +141,8 @@ def main():
                         else:
                             message_log.add_message(
                                 Message('There is nothing here to pick up.', tcod.yellow))
+                    elif rest and game_state == GameStates.PLAYERS_TURN:
+                        game_state = GameStates.ENEMY_TURN
 
                     if show_inventory:
                         previous_game_state = game_state
@@ -151,7 +154,7 @@ def main():
                     if inventory_index is not None and previous_game_state != GameStates.PLAYER_DEAD and inventory_index < len(player.inventory.items):
                         item = player.inventory.items[inventory_index]
                         if game_state == GameStates.SHOW_INVENTORY:
-                            player_turn_results.extend(player.inventory.use(item))
+                            player_turn_results.extend(player.inventory.use(item, entities=entities, fov_map=fov_map))
                         elif game_state == GameStates.DROP_INVENTORY:
                             player_turn_results.extend(player.inventory.drop_item(item))
 
