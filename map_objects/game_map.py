@@ -10,7 +10,7 @@ from game_messages import Message
 from map_objects.rectangle import Rect
 from map_objects.tile import Tile
 from entity import Entity
-from components.item_fns import heal, cast_lightning, cast_fireball
+from components.item_fns import heal, cast_lightning, cast_fireball, cast_confuse
 from components.fighter import Fighter
 from components.ai import BasicMonster
 from components.item import Item
@@ -128,11 +128,14 @@ class GameMap:
                 if item_chance < 70:
                     item = Entity(x, y, '!', tcod.violet, 'Healing Potion',
                                   render_order=RenderOrder.ITEM, item=Item(use_function=heal, amount=4))
-                elif item_chance < 85:
+                elif item_chance < 80:
                     item_component = Item(use_function=cast_fireball, targeting=True, targeting_message=Message(
                         'Left Click a target tile to fireball.', tcod.light_cyan), damage=12, radius=3)
                     item = Entity(x, y, '#', tcod.red, 'Fireball Scroll',
                                   render_order=RenderOrder.ITEM, item=item_component)
+                elif item_chance < 90:
+                    item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message('Left Click an enemy to confuse it', tcod.light_cyan))
+                    item = Entity(x, y, '#', tcod.light_pink, 'Confusion Scroll', render_order=RenderOrder.ITEM, item=item_component)
                 else:
                     item_component = Item(
                         use_function=cast_lightning, damage=20, maximum_range=5)

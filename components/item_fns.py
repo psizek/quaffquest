@@ -1,5 +1,6 @@
 import tcod
 from game_messages import Message
+from components.ai import ConfusedMonster
 
 
 def heal(*args, **kwargs):
@@ -73,5 +74,32 @@ def cast_fireball(*args, **kwargs):
             results.append({'message': Message(
                 'The {0} gets burned for {1} hit points.'.format(entity.name, damage), tcod.orange)})
             results.extend(entity.fighter.take_damage(damage))
+
+    return results
+
+def cast_confuse(*args, **kwargs):
+    entities = kwargs.get('entities')
+    fov_map = kwargs.get('fov_map')
+    target_x: int = kwargs.get('target_x')
+    target_y: int = kwargs.get('target_y')
+
+    results = []
+
+    if not fov_map.fov[target_y][target_x]:
+        results.append({'consumed': False, 'message': Message('You cannot target a tile outside your field of view.', tcod.yellow)})
+        return results
+
+    for entity in entities:
+        if entity.x == target_x and entity.y == target_y and entity.ai:
+            confused_ai = ConfusedMonster(entity.ai, 10)
+
+            confused_ai.owner = entity
+            entity.ai = confused_ai
+
+            results.append({'consumed': True, 'message': Message('The eyes of the {0} look vacant, as he starts to stumble around!'.format(entity.name), tcod.light_green)})
+
+            break
+    else:
+        results.append({'consumed': False, 'message': Message('There is no targetable enemy at that location.', tcod.yellow)})
 
     return results
