@@ -1,6 +1,8 @@
 import tcod
 from game_messages import Message
 
+from typing import List, Dict, Any
+
 
 class Inventory:
     def __init__(self, capacity):
@@ -25,7 +27,7 @@ class Inventory:
         return results
 
     def use(self, item_entity, **kwargs):
-        results = []
+        results: List[Dict[str, Any]] = []
 
         item_component = item_entity.item
 
@@ -33,21 +35,24 @@ class Inventory:
             results.append(
                 {'message': Message(f'The {item_entity.name} cannot be used', tcod.yellow)})
         else:
-            kwargs = {**item_component.function_kwargs, **kwargs}
-            item_use_results = item_component.use_function(
-                self.owner, **kwargs)
+            if item_component.targeting and not (kwargs.get('target_x') or kwargs.get('target_y')):
+                results.append({'targeting': item_entity})
+            else:
+                kwargs = {**item_component.function_kwargs, **kwargs}
+                item_use_results = item_component.use_function(
+                    self.owner, **kwargs)
 
-            for item_use_result in item_use_results:
-                if item_use_result.get('consumed'):
-                    self.remove_item(item_entity)
+                for item_use_result in item_use_results:
+                    if item_use_result.get('consumed'):
+                        self.remove_item(item_entity)
 
-            results.extend(item_use_results)
+                results.extend(item_use_results)
 
         return results
 
     def remove_item(self, item):
         self.items.remove(item)
-    
+
     def drop_item(self, item):
         results = []
 
@@ -55,5 +60,6 @@ class Inventory:
         item.y = self.owner.y
 
         self.remove_item(item)
-        results.append({'item_dropped': item, 'message':Message(f'You dropped the {item.name}', tcod.yellow)})
+        results.append({'item_dropped': item, 'message': Message(
+            f'You dropped the {item.name}', tcod.yellow)})
         return results

@@ -22,7 +22,7 @@ def menu(root_con, header: str, options, width: int):
         letter_index += 1
 
     x: int = int((root_con.width - width) / 2)
-    y: int = int((root_con.height - height) / 2)
+    y = int((root_con.height - height) / 2)
     window.blit(root_con, x, y, 0, 0, width, height, 1.0, 0.7)
 
 

@@ -4,9 +4,9 @@ import tcod.event
 from game_states import GameStates
 from typing import Any
 
-#FYI, keys are in tcod.event_constants, so use the next couple lines to grab the source code
+# FYI, keys are in tcod.event_constants, so use the next couple lines to grab the source code
 #import inspect
-#print(inspect(tcod.event_constants))
+# print(inspect(tcod.event_constants))
 
 
 class Event_State_Manager:
@@ -14,6 +14,7 @@ class Event_State_Manager:
         self.play_state = Play_State()
         self.inv_state = Inv_State()
         self.dead_state = Dead_State()
+        self.targeting_state = Targeting_State()
 
         self.action = None
         self.mouse_pos = None
@@ -26,6 +27,9 @@ class Event_State_Manager:
         elif game_state == GameStates.PLAYER_DEAD:
             self.dead_state.dispatch(event)
             self.action = self.dead_state.action
+        elif game_state == GameStates.TARGETING:
+            self.targeting_state.dispatch(event)
+            self.action = self.targeting_state.action
         else:
             self.play_state.dispatch(event)
             self.action = self.play_state.action
@@ -105,10 +109,6 @@ class Dead_State(Generic_State):
 
 
 class Inv_State(Generic_State):
-    def __init__(self):
-        self.action = None
-        self.mouse_pos = tcod.event.Point(0, 0)
-
     def ev_keydown(self, event):
         key = event.sym
         index = key - ord('a')
@@ -116,3 +116,9 @@ class Inv_State(Generic_State):
         if index >= 0:
             self.action = {'inventory_index': index}
         super().ev_keydown(event)
+
+
+class Targeting_State(Generic_State):
+    def ev_mousebuttondown(self, event):
+        if event.button == tcod.event.BUTTON_LEFT:
+            self.action = {'target': (event.tile.x, event.tile.y)}

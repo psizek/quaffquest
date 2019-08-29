@@ -5,10 +5,12 @@ import tcod
 
 from render_fns import RenderOrder
 
+from game_messages import Message
+
 from map_objects.rectangle import Rect
 from map_objects.tile import Tile
 from entity import Entity
-from components.item_fns import heal, cast_lightning
+from components.item_fns import heal, cast_lightning, cast_fireball
 from components.fighter import Fighter
 from components.ai import BasicMonster
 from components.item import Item
@@ -118,15 +120,22 @@ class GameMap:
                 entities.append(monster)
 
         for i in range(number_of_items):
-            x: int = randint(room.x1 + 1, room.x2 - 1)
-            y: int = randint(room.y1 + 1, room.y2 - 1)
+            x = randint(room.x1 + 1, room.x2 - 1)
+            y = randint(room.y1 + 1, room.y2 - 1)
 
             if not any([entity for entity in entities if entity.x == x and entity.y == y]):
-                item_chance: int = randint(0,100)
+                item_chance: int = randint(0, 100)
                 if item_chance < 70:
-                    item = Entity(x, y, '!', tcod.violet, 'Healing Potion', render_order=RenderOrder.ITEM, item=Item(use_function=heal, amount=4))
+                    item = Entity(x, y, '!', tcod.violet, 'Healing Potion',
+                                  render_order=RenderOrder.ITEM, item=Item(use_function=heal, amount=4))
+                elif item_chance < 85:
+                    item_component = Item(use_function=cast_fireball, targeting=True, targeting_message=Message(
+                        'Left Click a target tile to fireball.', tcod.light_cyan), damage=12, radius=3)
+                    item = Entity(x, y, '#', tcod.red, 'Fireball Scroll',
+                                  render_order=RenderOrder.ITEM, item=item_component)
                 else:
-                    item_component = Item(use_function=cast_lightning, damage=20, maximum_range=5)
+                    item_component = Item(
+                        use_function=cast_lightning, damage=20, maximum_range=5)
                     item = Entity(x, y, '#', tcod.yellow, 'Lightning Scroll', render_order=RenderOrder.ITEM,
                                   item=item_component)
                 entities.append(item)
