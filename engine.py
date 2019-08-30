@@ -5,28 +5,19 @@ import tcod.event
 import tcod.map
 
 import constants as c
+from initialize_new_game import get_game_variables
 
-from render_fns import clear_all, render_all, RenderOrder
+from render_fns import clear_all, render_all
 from state import Event_State_Manager
 
-from components.fighter import Fighter
-from components.inventory import Inventory
 from death_functions import kill_monster, kill_player
-from entity import Entity, get_blocking_entities_at_location
-from map_objects.game_map import GameMap
+from entity import get_blocking_entities_at_location
 from fov_fns import initialize_fov
-from game_messages import Message, MessageLog
+from game_messages import Message
 from game_states import GameStates
 
 
 def main():
-
-    fighter_component = Fighter(hp=30, defense=2, power=5)
-    inventory_component = Inventory(26)
-    player = Entity(0, 0, '@', tcod.white, 'Player', blocks=True, render_order=RenderOrder.ACTOR,
-                    fighter=fighter_component, inventory=inventory_component)
-
-    entities = [player]
 
     tcod.console_set_custom_font(
         'arial10x10.png', tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD)
@@ -38,16 +29,11 @@ def main():
         panel: tcod.console.Console = tcod.console.Console(
             c.SCREEN_WIDTH, c.PANEL_HEIGHT)
 
-        game_map: GameMap = GameMap(c.MAP_WIDTH, c.MAP_HEIGHT)
-        game_map.make_map(c.MAX_ROOMS, c.ROOM_MIN_SIZE, c.ROOM_MAX_SIZE, c.MAP_WIDTH,
-                          c.MAP_HEIGHT, player, entities, c.MAX_MONSTERS_PER_ROOM, c.MAX_ITEMS_PER_ROOM)
+        player, entities, game_map, message_log, game_state = get_game_variables()
 
         fov_recompute: bool = True
         fov_map: tcod.map.Map = initialize_fov(game_map)
 
-        message_log = MessageLog(c.MESSAGE_X, c.MESSAGE_WIDTH, c.MESSAGE_HEIGHT)
-
-        game_state = GameStates.PLAYERS_TURN
         previous_game_state = game_state
 
         targeting_item = None
