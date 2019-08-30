@@ -4,6 +4,8 @@ import tcod
 import tcod.event
 import tcod.map
 
+import constants as c
+
 from render_fns import clear_all, render_all, RenderOrder
 from state import Event_State_Manager
 
@@ -18,37 +20,6 @@ from game_states import GameStates
 
 
 def main():
-    screen_width: int = 80
-    screen_height: int = 50
-
-    bar_width: int = 20
-    panel_height: int = 7
-    panel_y: int = screen_height - panel_height
-
-    message_x: int = bar_width + 2
-    message_width: int = screen_width - bar_width - 2
-    message_height: int = panel_height - 1
-
-    map_width: int = 80
-    map_height: int = 43
-
-    room_max_size: int = 10
-    room_min_size: int = 6
-    max_rooms: int = 30
-
-    fov_algorithm: int = 0
-    fov_light_walls: bool = True
-    fov_radius: int = 10
-
-    max_monsters_per_room: int = 3
-    max_items_per_room: int = 2
-
-    colors = {
-        'dark_wall': tcod.Color(0, 0, 100),
-        'dark_ground': tcod.Color(50, 50, 150),
-        'light_wall': tcod.Color(130, 110, 50),
-        'light_ground': tcod.Color(200, 180, 50)
-    }
 
     fighter_component = Fighter(hp=30, defense=2, power=5)
     inventory_component = Inventory(26)
@@ -60,21 +31,21 @@ def main():
     tcod.console_set_custom_font(
         'arial10x10.png', tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD)
 
-    with tcod.console_init_root(screen_width, screen_height, 'Quaff Quest', False, tcod.RENDERER_SDL2) as root_con:
+    with tcod.console_init_root(c.SCREEN_WIDTH, c.SCREEN_HEIGHT, c.WINDOW_TITLE, False, tcod.RENDERER_SDL2) as root_con:
 
         con: tcod.console.Console = tcod.console.Console(
-            screen_width, screen_height)
+            c.SCREEN_WIDTH, c.SCREEN_HEIGHT)
         panel: tcod.console.Console = tcod.console.Console(
-            screen_width, panel_height)
+            c.SCREEN_WIDTH, c.PANEL_HEIGHT)
 
-        game_map: GameMap = GameMap(map_width, map_height)
-        game_map.make_map(max_rooms, room_min_size, room_max_size, map_width,
-                          map_height, player, entities, max_monsters_per_room, max_items_per_room)
+        game_map: GameMap = GameMap(c.MAP_WIDTH, c.MAP_HEIGHT)
+        game_map.make_map(c.MAX_ROOMS, c.ROOM_MIN_SIZE, c.ROOM_MAX_SIZE, c.MAP_WIDTH,
+                          c.MAP_HEIGHT, player, entities, c.MAX_MONSTERS_PER_ROOM, c.MAX_ITEMS_PER_ROOM)
 
         fov_recompute: bool = True
         fov_map: tcod.map.Map = initialize_fov(game_map)
 
-        message_log = MessageLog(message_x, message_width, message_height)
+        message_log = MessageLog(c.MESSAGE_X, c.MESSAGE_WIDTH, c.MESSAGE_HEIGHT)
 
         game_state = GameStates.PLAYERS_TURN
         previous_game_state = game_state
@@ -90,10 +61,10 @@ def main():
 
                 if fov_recompute:
                     fov_map.compute_fov(
-                        player.x, player.y, fov_radius, fov_light_walls, fov_algorithm)
+                        player.x, player.y, c.FOV_RADIUS, c.FOV_LIGHT_WALLS, c.FOV_ALGORITHM)
 
                 render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute,
-                           message_log, bar_width, panel_y, state.mouse_pos, colors, game_state)
+                           message_log, c.BAR_WIDTH, c.PANEL_Y, state.mouse_pos, c.COLORS, game_state)
                 fov_recompute = False
                 tcod.console_flush()
                 clear_all(con, entities)
