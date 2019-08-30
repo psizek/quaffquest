@@ -34,3 +34,16 @@ def inventory_menu(root_con, header: str, inventory, inventory_width):
         options = [item.name for item in inventory.items]
 
     menu(root_con, header, options, inventory_width)
+
+
+def main_menu(root_con, background_image):
+    background_image.blit_2x(root_con, 0, 0)
+    root_con.print(int(root_con.width/2), int(root_con.height/2) - 4,
+                   'Quaff Quest', tcod.light_yellow, None, 1, tcod.CENTER)
+    root_con.print(int(root_con.width/2), int(root_con.height/2),
+                   'By Phil Sizek', tcod.light_yellow, None, 1, tcod.CENTER)
+    menu(root_con, '', ['Play a new game', 'Continue last game', 'Quit'], 24)
+
+
+def message_box(root_con, header, width):
+    menu(root_con, header, [], width)
