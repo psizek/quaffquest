@@ -148,6 +148,7 @@ class MainMenu_State(Generic_State):
             self.action = {'exit': True}
         super().ev_keydown(event)
 
+
 class LevelUp_State(Generic_State):
     def ev_keydown(self, event):
         super().ev_keydown(event)

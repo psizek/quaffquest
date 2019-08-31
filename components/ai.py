@@ -4,6 +4,7 @@ from random import randint
 
 from game_messages import Message
 
+
 class BasicMonster:
     def take_turn(self, target, fov_map, game_map, entities):
         results = []
@@ -16,6 +17,7 @@ class BasicMonster:
                 attack_results = monster.fighter.attack(target)
                 results.extend(attack_results)
         return results
+
 
 class ConfusedMonster:
     def __init__(self, previous_ai, number_of_turns=10):
@@ -35,6 +37,7 @@ class ConfusedMonster:
             self.number_of_turns -= 1
         else:
             self.owner.ai = self.previous_ai
-            results.append({'message': Message('The {0} is no longer confused!'.format(self.owner.name), tcod.red)})
+            results.append({'message': Message(
+                'The {0} is no longer confused!'.format(self.owner.name), tcod.red)})
 
         return results

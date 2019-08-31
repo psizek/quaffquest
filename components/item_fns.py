@@ -77,6 +77,7 @@ def cast_fireball(*args, **kwargs):
 
     return results
 
+
 def cast_confuse(*args, **kwargs):
     entities = kwargs.get('entities')
     fov_map = kwargs.get('fov_map')
@@ -86,7 +87,8 @@ def cast_confuse(*args, **kwargs):
     results = []
 
     if not fov_map.fov[target_y][target_x]:
-        results.append({'consumed': False, 'message': Message('You cannot target a tile outside your field of view.', tcod.yellow)})
+        results.append({'consumed': False, 'message': Message(
+            'You cannot target a tile outside your field of view.', tcod.yellow)})
         return results
 
     for entity in entities:
@@ -96,10 +98,12 @@ def cast_confuse(*args, **kwargs):
             confused_ai.owner = entity
             entity.ai = confused_ai
 
-            results.append({'consumed': True, 'message': Message('The eyes of the {0} look vacant, as he starts to stumble around!'.format(entity.name), tcod.light_green)})
+            results.append({'consumed': True, 'message': Message(
+                'The eyes of the {0} look vacant, as he starts to stumble around!'.format(entity.name), tcod.light_green)})
 
             break
     else:
-        results.append({'consumed': False, 'message': Message('There is no targetable enemy at that location.', tcod.yellow)})
+        results.append({'consumed': False, 'message': Message(
+            'There is no targetable enemy at that location.', tcod.yellow)})
 
     return results

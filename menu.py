@@ -55,6 +55,7 @@ def main_menu(root_con, background_image):
 def message_box(root_con, header, width):
     menu(root_con, header, [], width)
 
+
 def level_up_menu(root_con, header, player, menu_width):
     options = ['Constitution (+20 HP, from {0})'.format(player.fighter.max_hp),
                'Strength (+1 attack, from {0})'.format(player.fighter.power),
@@ -63,15 +64,23 @@ def level_up_menu(root_con, header, player, menu_width):
 
 
 def character_screen(root_con: tcod.console.Console, player, character_screen_width: int, character_screen_height: int):
-    window = tcod.console.Console(character_screen_width, character_screen_height)
+    window = tcod.console.Console(
+        character_screen_width, character_screen_height)
 
-    window.print_box(0, 1, window.width, window.height, 'Character Information', tcod.white)
-    window.print_box(0, 2, window.width, window.height, f'Level: {player.level.current_level}', tcod.white)
-    window.print_box(0, 3, window.width, window.height, f'Experience: {player.level.current_xp}', tcod.white)
-    window.print_box(0, 4, window.width, window.height, f'Experience to Level: {player.level.experience_to_next_level}', tcod.white)
-    window.print_box(0, 6, window.width, window.height, f'Maximum HP: {player.fighter.max_hp}', tcod.white)
-    window.print_box(0, 7, window.width, window.height, f'Attack: {player.fighter.power}', tcod.white)
-    window.print_box(0, 8, window.width, window.height, f'Defense: {player.fighter.defense}', tcod.white)
+    window.print_box(0, 1, window.width, window.height,
+                     'Character Information', tcod.white)
+    window.print_box(0, 2, window.width, window.height,
+                     f'Level: {player.level.current_level}', tcod.white)
+    window.print_box(0, 3, window.width, window.height,
+                     f'Experience: {player.level.current_xp}', tcod.white)
+    window.print_box(0, 4, window.width, window.height,
+                     f'Experience to Level: {player.level.experience_to_next_level}', tcod.white)
+    window.print_box(0, 6, window.width, window.height,
+                     f'Maximum HP: {player.fighter.max_hp}', tcod.white)
+    window.print_box(0, 7, window.width, window.height,
+                     f'Attack: {player.fighter.power}', tcod.white)
+    window.print_box(0, 8, window.width, window.height,
+                     f'Defense: {player.fighter.defense}', tcod.white)
     x = root_con.width // 2 - character_screen_width // 2
     y = root_con.height // 2 - character_screen_height // 2
     window.blit(root_con, x, y, 0, 0, 0, 0, 1, 0.7)

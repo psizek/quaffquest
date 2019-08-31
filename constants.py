@@ -26,13 +26,9 @@ FOV_ALGORITHM: int = 0
 FOV_LIGHT_WALLS: bool = True
 FOV_RADIUS: int = 10
 
-MAX_MONSTERS_PER_ROOM: int = 3
-MAX_ITEMS_PER_ROOM: int = 2
-
 COLORS: Dict[str, Color] = {
     'dark_wall': Color(0, 0, 100),
     'dark_ground': Color(50, 50, 150),
     'light_wall': Color(130, 110, 50),
     'light_ground': Color(200, 180, 50)
 }
-
