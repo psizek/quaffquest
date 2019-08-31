@@ -22,8 +22,7 @@ def get_game_variables():
 
     game_map = GameMap(c.MAP_WIDTH, c.MAP_HEIGHT)
     game_map.make_map(c.MAX_ROOMS, c.ROOM_MIN_SIZE, c.ROOM_MAX_SIZE,
-                      c.MAP_WIDTH, c.MAP_HEIGHT, player, entities,
-                      c.MAX_MONSTERS_PER_ROOM, c.MAX_ITEMS_PER_ROOM)
+                      c.MAP_WIDTH, c.MAP_HEIGHT, player, entities)
 
     message_log = MessageLog(c.MESSAGE_X, c.MESSAGE_WIDTH, c.MESSAGE_HEIGHT)
 
