@@ -15,6 +15,8 @@ class Event_State_Manager:
         self.inv_state = Inv_State()
         self.dead_state = Dead_State()
         self.targeting_state = Targeting_State()
+        self.levelup_state = LevelUp_State()
+        self.charScreen_state = Generic_State()
 
         self.action = None
         self.mouse_pos = None
@@ -30,6 +32,12 @@ class Event_State_Manager:
         elif game_state == GameStates.TARGETING:
             self.targeting_state.dispatch(event)
             self.action = self.targeting_state.action
+        elif game_state == GameStates.LEVEL_UP:
+            self.levelup_state.dispatch(event)
+            self.action = self.levelup_state.action
+        elif game_state == GameStates.CHARACTER_SCREEN:
+            self.charScreen_state.dispatch(event)
+            self.action = self.charScreen_state.action
         else:
             self.play_state.dispatch(event)
             self.action = self.play_state.action
@@ -92,6 +100,8 @@ class Play_State(Generic_State):
             self.action = {'drop_inventory': True}
         elif key == tcod.event.K_PERIOD and ((tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT) & event.mod):
             self.action = {'take_stairs': True}
+        elif key == tcod.event.K_c:
+            self.action = {'show_character_screen': True}
 
         super().ev_keydown(event)
 
@@ -136,4 +146,17 @@ class MainMenu_State(Generic_State):
             self.action = {'load_game': True}
         elif key == tcod.event.K_c:
             self.action = {'exit': True}
+        super().ev_keydown(event)
+
+class LevelUp_State(Generic_State):
+    def ev_keydown(self, event):
+        key = event.sym
+        lev_opt: str
+        if key == tcod.event.K_a:
+            lev_opt = 'hp'
+        elif key == tcod.event.K_b:
+            lev_opt = 'str'
+        elif key == tcod.event.K_c:
+            lev_opt = 'def'
+        self.action = {'level_up': lev_opt}
         super().ev_keydown(event)

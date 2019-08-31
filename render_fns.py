@@ -2,7 +2,7 @@ import tcod
 
 from enum import Enum, auto
 from game_states import GameStates
-from menu import inventory_menu
+from menu import inventory_menu, level_up_menu, character_screen
 
 
 class RenderOrder(Enum):
@@ -47,6 +47,10 @@ def render_all(root_con: tcod.console.Console, con: tcod.console.Console, panel:
         else:
             inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
         inventory_menu(root_con, inventory_title, player.inventory, 50)
+    elif game_state == GameStates.LEVEL_UP:
+        level_up_menu(root_con, 'Level up! Choose a stat to raise:', player, 40)
+    elif game_state == GameStates.CHARACTER_SCREEN:
+        character_screen(root_con, player, 30, 10)
 
 
 def render_main_map(con, entities, player, game_map, fov_map, fov_recompute, colors):
