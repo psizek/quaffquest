@@ -90,6 +90,8 @@ class Play_State(Generic_State):
             self.action = {'show_inventory': True}
         elif key == tcod.event.K_d:
             self.action = {'drop_inventory': True}
+        elif key == tcod.event.K_PERIOD and ((tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT) & event.mod):
+            self.action = {'take_stairs': True}
 
         super().ev_keydown(event)
 

@@ -14,13 +14,15 @@ from components.item_fns import heal, cast_lightning, cast_fireball, cast_confus
 from components.fighter import Fighter
 from components.ai import BasicMonster
 from components.item import Item
+from components.stairs import Stairs
 
 
 class GameMap:
-    def __init__(self, width, height):
+    def __init__(self, width, height, dungeon_level: int = 1):
         self.width = width
         self.height = height
         self.tiles = self.initialize_tiles()
+        self.dungeon_level = dungeon_level
 
     def initialize_tiles(self):
         tiles = [[Tile(True) for y in range(self.height)]
@@ -31,6 +33,9 @@ class GameMap:
     def make_map(self, max_rooms: int, room_min_size: int, room_max_size: int, map_width: int, map_height: int, player, entities, max_monsters_per_room: int, max_items_per_room: int):
         rooms: List[Rect] = []
         num_rooms: int = 0
+
+        center_of_last_room_x: int
+        center_of_last_room_y: int 
 
         for r in range(max_rooms):
             w: int = randint(room_min_size, room_max_size)
@@ -51,6 +56,8 @@ class GameMap:
 
                 # center coordinates of new room, will be useful later
                 (new_x, new_y) = new_room.center()
+                center_of_last_room_x = new_x
+                center_of_last_room_y = new_y
 
                 if num_rooms == 0:
                     # this is the first room, where the player starts at
@@ -79,6 +86,9 @@ class GameMap:
                 # finally, append the new room to the list
                 rooms.append(new_room)
                 num_rooms += 1
+        stairs_component = Stairs(self.dungeon_level + 1)
+        down_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '>', tcod.white, 'Stairs', render_order=RenderOrder.STAIRS, stairs=stairs_component)
+        entities.append(down_stairs)
 
     def create_room(self, room: Rect):
         for x in range(room.x1 + 1, room.x2):
@@ -134,8 +144,10 @@ class GameMap:
                     item = Entity(x, y, '#', tcod.red, 'Fireball Scroll',
                                   render_order=RenderOrder.ITEM, item=item_component)
                 elif item_chance < 90:
-                    item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message('Left Click an enemy to confuse it', tcod.light_cyan))
-                    item = Entity(x, y, '#', tcod.light_pink, 'Confusion Scroll', render_order=RenderOrder.ITEM, item=item_component)
+                    item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message(
+                        'Left Click an enemy to confuse it', tcod.light_cyan))
+                    item = Entity(x, y, '#', tcod.light_pink, 'Confusion Scroll',
+                                  render_order=RenderOrder.ITEM, item=item_component)
                 else:
                     item_component = Item(
                         use_function=cast_lightning, damage=20, maximum_range=5)
@@ -145,3 +157,18 @@ class GameMap:
 
     def is_blocked(self, x: int, y: int):
         return (self.tiles[x][y].blocked)
+    
+    def next_floor(self, player, message_log, c):
+        self.dungeon_level += 1
+        entities = [player]
+
+        self.tiles = self.initialize_tiles()
+        self.make_map(c.MAX_ROOMS, c.ROOM_MIN_SIZE, c.ROOM_MAX_SIZE,
+                      c.MAP_WIDTH, c.MAP_HEIGHT, player, entities,
+                      c.MAX_MONSTERS_PER_ROOM, c.MAX_ITEMS_PER_ROOM)
+
+        player.fighter.heal(player.fighter.max_hp // 2)
+
+        message_log.add_message(Message('You take a moment to rest, and recover your strength.', tcod.light_violet))
+
+        return entities
