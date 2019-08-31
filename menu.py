@@ -26,12 +26,19 @@ def menu(root_con, header: str, options, width: int):
     window.blit(root_con, x, y, 0, 0, width, height, 1.0, 0.7)
 
 
-def inventory_menu(root_con, header: str, inventory, inventory_width):
+def inventory_menu(root_con, header: str, player, inventory_width):
     """show a menu with each item of the inventory as an option"""
-    if len(inventory.items) == 0:
+    if len(player.inventory.items) == 0:
         options = ['Inventory is empty.']
     else:
-        options = [item.name for item in inventory.items]
+        options = []
+        for item in player.inventory.items:
+            if player.equipment.main_hand == item:
+                options.append('{0} (on main hand)'.format(item.name))
+            elif player.equipment.off_hand == item:
+                options.append('{0} (on off hand)'.format(item.name))
+            else:
+                options.append(item.name)
 
     menu(root_con, header, options, inventory_width)
 
