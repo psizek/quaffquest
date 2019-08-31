@@ -150,7 +150,10 @@ class MainMenu_State(Generic_State):
 
 class LevelUp_State(Generic_State):
     def ev_keydown(self, event):
+        super().ev_keydown(event)
         key = event.sym
+        if key not in [tcod.event.K_a, tcod.event.K_b, tcod.event.K_c]:
+            return
         lev_opt: str
         if key == tcod.event.K_a:
             lev_opt = 'hp'
@@ -159,4 +162,3 @@ class LevelUp_State(Generic_State):
         elif key == tcod.event.K_c:
             lev_opt = 'def'
         self.action = {'level_up': lev_opt}
-        super().ev_keydown(event)

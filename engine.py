@@ -194,7 +194,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_con, con
                                 player, message_log, c)
                             fov_map = initialize_fov(game_map)
                             fov_recompute = True
-                            tcod.console_clear(con)
+                            con.clear()
                             break
                     else:
                         message_log.add_message(
