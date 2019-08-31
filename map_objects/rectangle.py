@@ -11,8 +11,8 @@ class Rect:
 
     def center(self) -> Tuple[int, int]:
         """returns center of rectangle"""
-        center_x = int((self.x1 + self.x2) / 2)
-        center_y = int((self.y1 + self.y2) / 2)
+        center_x = int((self.x1 + self.x2) // 2)
+        center_y = int((self.y1 + self.y2) // 2)
         return (center_x, center_y)
 
     def intersect(self, other) -> bool:

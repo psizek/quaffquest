@@ -21,8 +21,8 @@ def menu(root_con, header: str, options, width: int):
         y += 1
         letter_index += 1
 
-    x: int = int((root_con.width - width) / 2)
-    y = int((root_con.height - height) / 2)
+    x: int = int((root_con.width - width) // 2)
+    y = int((root_con.height - height) // 2)
     window.blit(root_con, x, y, 0, 0, width, height, 1.0, 0.7)
 
 
@@ -45,9 +45,9 @@ def inventory_menu(root_con, header: str, player, inventory_width):
 
 def main_menu(root_con, background_image):
     background_image.blit_2x(root_con, 0, 0)
-    root_con.print(int(root_con.width/2), int(root_con.height/2) - 4,
+    root_con.print(root_con.width // 2, root_con.height // 2 - 4,
                    'Quaff Quest', tcod.light_yellow, None, 1, tcod.CENTER)
-    root_con.print(int(root_con.width/2), int(root_con.height/2),
+    root_con.print(root_con.width // 2, root_con.height // 2,
                    'By Phil Sizek', tcod.light_yellow, None, 1, tcod.CENTER)
     menu(root_con, '', ['Play a new game', 'Continue last game', 'Quit'], 24)
 

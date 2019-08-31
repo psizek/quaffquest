@@ -37,8 +37,8 @@ def render_all(root_con: tcod.console.Console, con: tcod.console.Console, panel:
     render_main_map(con, entities, player, game_map,
                     fov_map, fov_recompute, colors)
     con.blit(root_con)
-    render_panel(panel, message_log, bar_width,
-                 player, mouse_pos, entities, fov_map, game_map.dungeon_level)
+    render_panel(panel, message_log, bar_width, player, mouse_pos,
+                 entities, fov_map, game_map.dungeon_level)
     panel.blit(root_con, 0, panel_y)
 
     if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
