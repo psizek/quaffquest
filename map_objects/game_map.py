@@ -9,6 +9,7 @@ from game_messages import Message
 
 from map_objects.rectangle import Rect
 from map_objects.tile import Tile
+from random_utils import random_choice_from_dict
 from entity import Entity
 from components.item_fns import heal, cast_lightning, cast_fireball, cast_confuse
 from components.fighter import Fighter
@@ -111,18 +112,22 @@ class GameMap:
         number_of_monsters = randint(0, max_monsters_per_room)
         number_of_items = randint(0, max_items_per_room)
 
+        monster_chances = {'orc': 80, 'troll': 20}
+        item_chances = {'healing_potion': 70, 'lightning_scroll': 10, 'fireball_scroll': 10, 'confusion_scroll': 10}
+
         for i in range(number_of_monsters):
             # Choose a random location in the room
             x: int = randint(room.x1 + 1, room.x2 - 1)
             y: int = randint(room.y1 + 1, room.y2 - 1)
 
             if not any([entity for entity in entities if entity.x == x and entity.y == y]):
-                if randint(0, 100) < 80:
+                monster_choice = random_choice_from_dict(monster_chances)
+                if monster_choice == 'orc':
                     fighter_component = Fighter(hp=10, defense=0, power=3, xp=35)
                     ai_component = BasicMonster()
                     monster = Entity(x, y, 'o', tcod.desaturated_green, 'Orc', blocks=True,
                                      render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
-                else:
+                elif monster_choice == 'troll':
                     fighter_component = Fighter(hp=16, defense=1, power=4, xp=100)
                     ai_component = BasicMonster()
                     monster = Entity(x, y, 'T', tcod.darker_green, 'Troll', blocks=True,
@@ -134,21 +139,21 @@ class GameMap:
             y = randint(room.y1 + 1, room.y2 - 1)
 
             if not any([entity for entity in entities if entity.x == x and entity.y == y]):
-                item_chance: int = randint(0, 100)
-                if item_chance < 70:
+                item_choice = random_choice_from_dict(item_chances)
+                if item_choice == 'healing_potion':
                     item = Entity(x, y, '!', tcod.violet, 'Healing Potion',
                                   render_order=RenderOrder.ITEM, item=Item(use_function=heal, amount=4))
-                elif item_chance < 80:
+                elif item_choice == 'fireball_scroll':
                     item_component = Item(use_function=cast_fireball, targeting=True, targeting_message=Message(
                         'Left Click a target tile to fireball.', tcod.light_cyan), damage=12, radius=3)
                     item = Entity(x, y, '#', tcod.red, 'Fireball Scroll',
                                   render_order=RenderOrder.ITEM, item=item_component)
-                elif item_chance < 90:
+                elif item_choice == 'confusion_scroll':
                     item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message(
                         'Left Click an enemy to confuse it', tcod.light_cyan))
                     item = Entity(x, y, '#', tcod.light_pink, 'Confusion Scroll',
                                   render_order=RenderOrder.ITEM, item=item_component)
-                else:
+                elif item_choice == 'lightning_scroll':
                     item_component = Item(
                         use_function=cast_lightning, damage=20, maximum_range=5)
                     item = Entity(x, y, '#', tcod.yellow, 'Lightning Scroll', render_order=RenderOrder.ITEM,
