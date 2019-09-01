@@ -18,6 +18,7 @@ from components.equipment import Equipment
 from components.equippable import Equippable
 from components.item import Item
 from components.stairs import Stairs
+from components.position import Position
 
 
 class GameMap:
@@ -89,8 +90,9 @@ class GameMap:
                 rooms.append(new_room)
                 num_rooms += 1
         stairs_component = Stairs(self.dungeon_level + 1)
-        down_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '>', tcod.white,
-                             'Stairs', render_order=RenderOrder.STAIRS, stairs=stairs_component)
+        pos_comp = Position(center_of_last_room_x, center_of_last_room_y)
+        down_stairs = Entity('>', tcod.white,
+                             'Stairs', position=pos_comp, render_order=RenderOrder.STAIRS, stairs=stairs_component)
         entities.append(down_stairs)
 
     def create_room(self, room: Rect):
@@ -135,6 +137,7 @@ class GameMap:
             # Choose a random location in the room
             x: int = randint(room.x1 + 1, room.x2 - 1)
             y: int = randint(room.y1 + 1, room.y2 - 1)
+            pos_comp = Position(x, y)
 
             if not any([entity for entity in entities if entity.pos.x == x and entity.pos.y == y]):
                 monster_choice = random_choice_from_dict(monster_chances)
@@ -142,49 +145,49 @@ class GameMap:
                     fighter_component = Fighter(
                         hp=20, defense=0, power=4, xp=35)
                     ai_component = BasicMonster()
-                    monster = Entity(x, y, 'o', tcod.desaturated_green, 'Orc', blocks=True,
+                    monster = Entity('o', tcod.desaturated_green, 'Orc', blocks=True, position=pos_comp,
                                      render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
                 elif monster_choice == 'troll':
                     fighter_component = Fighter(
                         hp=30, defense=2, power=8, xp=100)
                     ai_component = BasicMonster()
-                    monster = Entity(x, y, 'T', tcod.darker_green, 'Troll', blocks=True,
+                    monster = Entity('T', tcod.darker_green, 'Troll', blocks=True, position=pos_comp,
                                      render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
                 entities.append(monster)
 
         for i in range(number_of_items):
             x = randint(room.x1 + 1, room.x2 - 1)
             y = randint(room.y1 + 1, room.y2 - 1)
+            pos_comp = Position(x, y)
 
             if not any([entity for entity in entities if entity.pos.x == x and entity.pos.y == y]):
                 item_choice = random_choice_from_dict(item_chances)
                 if item_choice == 'healing_potion':
-                    item = Entity(x, y, '!', tcod.violet, 'Healing Potion',
+                    item = Entity('!', tcod.violet, 'Healing Potion', position=pos_comp,
                                   render_order=RenderOrder.ITEM, item=Item(use_function=heal, amount=40))
                 elif item_choice == 'sword':
                     equippable_component = Equippable(
                         EquipmentSlots.MAIN_HAND, power_bonus=3)
-                    item = Entity(x, y, '/', tcod.sky, 'Sword',
+                    item = Entity('/', tcod.sky, 'Sword', position=pos_comp,
                                   equippable=equippable_component)
                 elif item_choice == 'shield':
                     equippable_component = Equippable(
                         EquipmentSlots.OFF_HAND, defense_bonus=1)
-                    item = Entity(x, y, '[', tcod.darker_orange,
-                                  'Shield', equippable=equippable_component)
+                    item = Entity('[', tcod.darker_orange, 'Shield', position=pos_comp, equippable=equippable_component)
                 elif item_choice == 'fireball_scroll':
                     item_component = Item(use_function=cast_fireball, targeting=True, targeting_message=Message(
                         'Left Click a target tile to fireball.', tcod.light_cyan), damage=25, radius=3)
-                    item = Entity(x, y, '#', tcod.red, 'Fireball Scroll',
+                    item = Entity('#', tcod.red, 'Fireball Scroll', position=pos_comp,
                                   render_order=RenderOrder.ITEM, item=item_component)
                 elif item_choice == 'confusion_scroll':
                     item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message(
                         'Left Click an enemy to confuse it', tcod.light_cyan))
-                    item = Entity(x, y, '#', tcod.light_pink, 'Confusion Scroll',
+                    item = Entity('#', tcod.light_pink, 'Confusion Scroll', position=pos_comp,
                                   render_order=RenderOrder.ITEM, item=item_component)
                 elif item_choice == 'lightning_scroll':
                     item_component = Item(
                         use_function=cast_lightning, damage=40, maximum_range=5)
-                    item = Entity(x, y, '#', tcod.yellow, 'Lightning Scroll', render_order=RenderOrder.ITEM,
+                    item = Entity('#', tcod.yellow, 'Lightning Scroll', position=pos_comp, render_order=RenderOrder.ITEM,
                                   item=item_component)
                 entities.append(item)
 

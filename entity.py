@@ -7,8 +7,8 @@ from components.position import Position
 class Entity:
     """ A generic object to represent players, enemies, items, etc. """
 
-    def __init__(self, x: int, y: int, char, color, name, blocks: bool = False, render_order=RenderOrder.CORPSE, fighter=None, ai=None, item=None, inventory=None, stairs=None, level=None, equipment=None, equippable=None):
-        self.pos = Position(x, y)
+    def __init__(self, char, color, name, blocks: bool = False, position=None, render_order=RenderOrder.CORPSE, fighter=None, ai=None, item=None, inventory=None, stairs=None, level=None, equipment=None, equippable=None):
+        self.pos = position
         self.render = RenderData(char, color, render_order)
         self.name = name
         self.blocks = blocks

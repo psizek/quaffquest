@@ -7,6 +7,7 @@ from components.inventory import Inventory
 from components.level import Level
 from components.equipment import Equipment
 from components.equippable import Equippable
+from components.position import Position
 from entity import Entity
 from map_objects.game_map import GameMap
 from render_order import RenderOrder
@@ -21,13 +22,14 @@ def get_game_variables():
     inventory_component = Inventory(26)
     level_component = Level()
     equipment_component = Equipment()
-    player = Entity(0, 0, '@', tcod.white, 'Player', blocks=True, render_order=RenderOrder.ACTOR,
+    position_component = Position(0, 0)
+    player = Entity('@', tcod.white, 'Player',  blocks=True, position=position_component, render_order=RenderOrder.ACTOR,
                     fighter=fighter_component, inventory=inventory_component, level=level_component, equipment=equipment_component)
     entities = [player]
 
     equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=2)
-    dagger = Entity(0, 0, '-', tcod.sky, 'Dagger',
-                    equippable=equippable_component)
+    dagger = Entity('-', tcod.sky, 'Dagger',
+                    equippable=equippable_component, position=position_component)
     player.inventory.add_item(dagger)
     player.equipment.toggle_equip(dagger)
 
