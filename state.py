@@ -134,7 +134,6 @@ class Targeting_State(Generic_State):
     def ev_mousebuttondown(self, event):
         if event.button == tcod.event.BUTTON_LEFT:
             self.action = {'target': (event.tile.x, event.tile.y)}
-        super().ev_keydown(event)
 
 
 class MainMenu_State(Generic_State):
