@@ -102,7 +102,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_con, con
 
             if fov_recompute:
                 fov_map.compute_fov(
-                    player.x, player.y, c.FOV_RADIUS, c.FOV_LIGHT_WALLS, c.FOV_ALGORITHM)
+                    player.pos.x, player.pos.y, c.FOV_RADIUS, c.FOV_LIGHT_WALLS, c.FOV_ALGORITHM)
 
             render_all(root_con, con, panel, entities, player, game_map, fov_map, fov_recompute,
                        message_log, c.BAR_WIDTH, c.PANEL_Y, state.mouse_pos, c.COLORS, game_state)
@@ -145,8 +145,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_con, con
 
                 if move and game_state == GameStates.PLAYERS_TURN:
                     dx, dy = move
-                    destination_x = player.x + dx
-                    destination_y = player.y + dy
+                    destination_x = player.pos.x + dx
+                    destination_y = player.pos.y + dy
                     if not game_map.is_blocked(destination_x, destination_y):
                         target = get_blocking_entities_at_location(
                             entities, destination_x, destination_y)
@@ -156,12 +156,12 @@ def play_game(player, entities, game_map, message_log, game_state, root_con, con
                             attack_results = player.fighter.attack(target)
                             player_turn_results.extend(attack_results)
                         else:
-                            player.move(dx, dy)
+                            player.pos.move(dx, dy)
                             fov_recompute = True
                         game_state = GameStates.ENEMY_TURN
                 elif pickup and game_state == GameStates.PLAYERS_TURN:
                     for entity in entities:
-                        if entity.item and entity.x == player.x and entity.y == player.y:
+                        if entity.item and entity.pos.x == player.pos.x and entity.pos.y == player.pos.y:
                             pickup_results = player.inventory.add_item(
                                 entity)
                             player_turn_results.extend(pickup_results)
@@ -190,7 +190,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_con, con
 
                 if take_stairs and game_state == GameStates.PLAYERS_TURN:
                     for entity in entities:
-                        if entity.stairs and entity.x == player.x and entity.y == player.y:
+                        if entity.stairs and entity.pos.x == player.pos.x and entity.pos.y == player.pos.y:
                             entities = game_map.next_floor(
                                 player, message_log, c)
                             fov_map = initialize_fov(game_map)

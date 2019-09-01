@@ -61,8 +61,8 @@ class Inventory:
         results = []
         if self.owner.equipment.main_hand == item or self.owner.equipment.off_hand == item:
             self.owner.equipment.toggle_equip(item)
-        item.x = self.owner.x
-        item.y = self.owner.y
+        item.pos.x = self.owner.pos.x
+        item.pos.y = self.owner.pos.y
 
         self.remove_item(item)
         results.append({'item_dropped': item, 'message': Message(

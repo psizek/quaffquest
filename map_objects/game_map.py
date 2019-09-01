@@ -64,8 +64,8 @@ class GameMap:
 
                 if num_rooms == 0:
                     # this is the first room, where the player starts at
-                    player.x = new_x
-                    player.y = new_y
+                    player.pos.x = new_x
+                    player.pos.y = new_y
                 else:
                     # all rooms after the first:
                     # connect it to the previous room with a tunnel
@@ -136,7 +136,7 @@ class GameMap:
             x: int = randint(room.x1 + 1, room.x2 - 1)
             y: int = randint(room.y1 + 1, room.y2 - 1)
 
-            if not any([entity for entity in entities if entity.x == x and entity.y == y]):
+            if not any([entity for entity in entities if entity.pos.x == x and entity.pos.y == y]):
                 monster_choice = random_choice_from_dict(monster_chances)
                 if monster_choice == 'orc':
                     fighter_component = Fighter(
@@ -156,7 +156,7 @@ class GameMap:
             x = randint(room.x1 + 1, room.x2 - 1)
             y = randint(room.y1 + 1, room.y2 - 1)
 
-            if not any([entity for entity in entities if entity.x == x and entity.y == y]):
+            if not any([entity for entity in entities if entity.pos.x == x and entity.pos.y == y]):
                 item_choice = random_choice_from_dict(item_chances)
                 if item_choice == 'healing_potion':
                     item = Entity(x, y, '!', tcod.violet, 'Healing Potion',

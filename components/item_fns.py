@@ -33,8 +33,8 @@ def cast_lightning(*args, **kwargs):
     closest_distance = maximum_range + 1
 
     for entity in entities:
-        if entity.fighter and entity != caster and fov_map.fov[entity.y][entity.x]:
-            distance = caster.distance_to(entity)
+        if entity.fighter and entity != caster and fov_map.fov[entity.pos.y][entity.pos.x]:
+            distance = caster.pos.distance_to(entity.pos)
 
             if distance < closest_distance:
                 target = entity
@@ -70,7 +70,7 @@ def cast_fireball(*args, **kwargs):
         'The fireball explodes, burning everything within {0} tiles!'.format(radius), tcod.orange)})
 
     for entity in entities:
-        if entity.distance(target_x, target_y) <= radius and entity.fighter:
+        if entity.pos.distance(target_x, target_y) <= radius and entity.fighter:
             results.append({'message': Message(
                 'The {0} gets burned for {1} hit points.'.format(entity.name, damage), tcod.orange)})
             results.extend(entity.fighter.take_damage(damage))
@@ -92,7 +92,7 @@ def cast_confuse(*args, **kwargs):
         return results
 
     for entity in entities:
-        if entity.x == target_x and entity.y == target_y and entity.ai:
+        if entity.pos.x == target_x and entity.pos.y == target_y and entity.ai:
             confused_ai = ConfusedMonster(entity.ai, 10)
 
             confused_ai.owner = entity

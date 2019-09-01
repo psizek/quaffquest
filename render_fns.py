@@ -7,8 +7,8 @@ from render_order import RenderOrder
 
 
 def get_names_under_mouse(mouse_pos, entities, fov_map):
-    names = [entity.name for entity in entities if entity.x ==
-             mouse_pos.x and entity.y == mouse_pos.y and fov_map.fov[entity.y, entity.x] == True]
+    names = [entity.name for entity in entities if entity.pos.x ==
+             mouse_pos.x and entity.pos.y == mouse_pos.y and fov_map.fov[entity.pos.y, entity.pos.x] == True]
     names = ', '.join(names)
 
     return names.capitalize()
@@ -102,11 +102,11 @@ def clear_all(con: tcod.console.Console, entities):
 
 
 def draw_entity(con: tcod.console.Console, entity, fov_map, game_map):
-    if fov_map.fov[entity.y][entity.x] or (entity.stairs and game_map.tiles[entity.x][entity.y].explored):
+    if fov_map.fov[entity.pos.y][entity.pos.x] or (entity.stairs and game_map.tiles[entity.pos.x][entity.pos.y].explored):
         con.default_fg = entity.render.color
-        con.put_char(entity.x, entity.y, ord(entity.render.char), tcod.BKGND_NONE)
+        con.put_char(entity.pos.x, entity.pos.y, ord(entity.render.char), tcod.BKGND_NONE)
 
 
 def clear_entity(con: tcod.console.Console, entity):
     """erase character representing object"""
-    con.put_char(entity.x, entity.y, ord(' '), tcod.BKGND_NONE)
+    con.put_char(entity.pos.x, entity.pos.y, ord(' '), tcod.BKGND_NONE)
