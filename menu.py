@@ -38,7 +38,7 @@ def inventory_menu(root_con, header: str, player, inventory_width):
             elif player.equipment.off_hand == item:
                 options.append('{0} (on off hand)'.format(item.name))
             else:
-                options.append(item.name)
+                options.append(f'{item.item.number}: {item.name}(s)')
 
     menu(root_con, header, options, inventory_width)
 

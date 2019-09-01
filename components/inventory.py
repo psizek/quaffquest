@@ -3,11 +3,18 @@ from game_messages import Message
 
 from typing import List, Dict, Any
 
+from copy import deepcopy, copy
 
 class Inventory:
     def __init__(self, capacity):
         self.capacity = capacity
         self.items = []
+
+    def get_item_match(self, item_name):
+        for item in self.items:
+            if item.name == item_name:
+                return item
+        return False
 
     def add_item(self, item):
         results = []
@@ -22,10 +29,14 @@ class Inventory:
                 'item_added': item,
                 'message': Message('You pick up the {0}!'.format(item.name), tcod.blue)
             })
-            self.items.append(item)
+            item_match = self.get_item_match(item.name)
+            if item_match:
+                item_match.item.number += item.item.number
+            else:
+                self.items.append(item)
 
         return results
-
+    
     def use(self, item_entity, **kwargs):
         results: List[Dict[str, Any]] = []
 
@@ -48,23 +59,35 @@ class Inventory:
 
                 for item_use_result in item_use_results:
                     if item_use_result.get('consumed'):
-                        self.remove_item(item_entity)
+                        self.destroy_item(item_entity)
 
                 results.extend(item_use_results)
 
         return results
 
-    def remove_item(self, item):
-        self.items.remove(item)
+
+    def destroy_item(self, item, number=1):
+        item.item.number -= number
+        if item.item.number < 1:
+            self.items.remove(item)
+
+    def remove_item(self, item, number=1):
+        if item.item.number - number < 1:
+            self.items.remove(item)
+            return item
+        else:
+            item.item.number -= number
+            item_removed = deepcopy(item)
+            item_removed.item.number = number
+            return item_removed
 
     def drop_item(self, item):
         results = []
         if self.owner.equipment.main_hand == item or self.owner.equipment.off_hand == item:
             self.owner.equipment.toggle_equip(item)
-        item.pos.x = self.owner.pos.x
-        item.pos.y = self.owner.pos.y
+        item.pos = copy(self.owner.pos)
 
-        self.remove_item(item)
-        results.append({'item_dropped': item, 'message': Message(
+        item_removed = self.remove_item(item)
+        results.append({'item_dropped': item_removed, 'message': Message(
             f'You dropped the {item.name}', tcod.yellow)})
         return results
