@@ -2,9 +2,15 @@ import math
 import tcod
 import numpy as np
 
-from render_fns import RenderOrder
+from render_order import RenderOrder
 from components.item import Item
+from components.render import RenderData
 
+
+class Position:
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
 
 class Entity:
     """ A generic object to represent players, enemies, items, etc. """
@@ -12,11 +18,9 @@ class Entity:
     def __init__(self, x: int, y: int, char, color, name, blocks: bool = False, render_order=RenderOrder.CORPSE, fighter=None, ai=None, item=None, inventory=None, stairs=None, level=None, equipment=None, equippable=None):
         self.x = x
         self.y = y
-        self.char = char
-        self.color = color
+        self.render = RenderData(char, color, render_order)
         self.name = name
         self.blocks = blocks
-        self.render_order = render_order
         self.fighter = fighter
         self.ai = ai
         self.item = item

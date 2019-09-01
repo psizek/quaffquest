@@ -3,13 +3,7 @@ import tcod
 from enum import Enum, auto
 from game_states import GameStates
 from menu import inventory_menu, level_up_menu, character_screen
-
-
-class RenderOrder(Enum):
-    STAIRS = auto()
-    CORPSE = auto()
-    ITEM = auto()
-    ACTOR = auto()
+from render_order import RenderOrder
 
 
 def get_names_under_mouse(mouse_pos, entities, fov_map):
@@ -78,7 +72,7 @@ def render_main_map(con, entities, player, game_map, fov_map, fov_recompute, col
                         tcod.console_set_char_background(
                             con, x, y, colors.get('dark_ground'), tcod.BKGND_SET)
     entities_in_render_order = sorted(
-        entities, key=lambda x: x.render_order.value)
+        entities, key=lambda x: x.render.render_order.value)
 
     # render entities
     for entity in entities_in_render_order:
@@ -109,11 +103,10 @@ def clear_all(con: tcod.console.Console, entities):
 
 def draw_entity(con: tcod.console.Console, entity, fov_map, game_map):
     if fov_map.fov[entity.y][entity.x] or (entity.stairs and game_map.tiles[entity.x][entity.y].explored):
-        con.default_fg = entity.color
-        tcod.console_put_char(con, entity.x, entity.y,
-                              entity.char, tcod.BKGND_NONE)
+        con.default_fg = entity.render.color
+        con.put_char(entity.x, entity.y, ord(entity.render.char), tcod.BKGND_NONE)
 
 
 def clear_entity(con: tcod.console.Console, entity):
     """erase character representing object"""
-    tcod.console_put_char(con, entity.x, entity.y, ' ', tcod.BKGND_NONE)
+    con.put_char(entity.x, entity.y, ord(' '), tcod.BKGND_NONE)

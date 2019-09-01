@@ -3,7 +3,7 @@ from typing import List
 
 import tcod
 
-from render_fns import RenderOrder
+from render_order import RenderOrder
 
 from game_messages import Message
 
