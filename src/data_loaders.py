@@ -4,7 +4,9 @@ from pathlib import Path
 
 
 def save_game(player, entities, game_map, message_log, game_state):
-    with shelve.open('savegame.dat', 'n') as data_file:
+    root_path = Path(__file__).parent.parent
+    path = root_path / 'savegame.dat'
+    with shelve.open(str(path), 'n') as data_file:
         data_file['player_index'] = entities.index(player)
         data_file['entities'] = entities
         data_file['game_map'] = game_map
@@ -13,10 +15,12 @@ def save_game(player, entities, game_map, message_log, game_state):
 
 
 def load_game():
-    if not Path('savegame.dat').is_file():
+    root_path = Path(__file__).parent.parent
+    path = root_path / 'savegame.dat'
+    if not path.is_file():
         raise FileNotFoundError
 
-    with shelve.open('savegame.dat', 'r') as data_file:
+    with shelve.open(str(path), 'r') as data_file:
         player_index = data_file['player_index']
         entities = data_file['entities']
         game_map = data_file['game_map']

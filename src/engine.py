@@ -18,12 +18,14 @@ from game_states import GameStates
 
 from data_loaders import load_game, save_game
 from menu import main_menu, message_box
-
+from pathlib import Path
 
 def main():
 
+    rootDir = Path(__file__).parent.parent
+    fontpath = rootDir / 'gfx' / 'arial10x10.png'
     tcod.console_set_custom_font(
-        'arial10x10.png', tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD)
+        str(fontpath), tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD)
 
     with tcod.console_init_root(c.SCREEN_WIDTH, c.SCREEN_HEIGHT, c.WINDOW_TITLE, False, tcod.RENDERER_SDL2) as root_con:
 
