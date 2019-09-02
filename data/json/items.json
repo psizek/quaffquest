@@ -1,0 +1,50 @@
+[
+    {
+        "classname": "HealingPotion",
+        "use_function": "heal",
+        "function_kwargs": {
+            "amount": 40
+        },
+        "targeting": false
+    },
+    {
+        "classname": "FireballScroll",
+        "use_function": "cast_fireball",
+        "function_kwargs": {
+            "damage": 25,
+            "radius": 3
+        },
+        "targeting": true,
+        "targeting_message": {
+            "text": "Left click a target tile to fireball",
+            "color": [
+                63,
+                255,
+                255
+            ]
+        }
+    },
+    {
+        "classname": "ConfuseScroll",
+        "use_function": "cast_confuse",
+        "function_kwargs": null,
+        "targeting": true,
+        "targeting_message": {
+            "text": "Left click an enemy to confuse it",
+            "color": [
+                63,
+                255,
+                255
+            ]
+        }
+    },
+    {
+        "classname": "LightningScroll",
+        "use_function": "cast_lightning",
+        "function_kwargs": {
+            "damage": 40,
+            "maximum_range": 5
+        },
+        "targeting": false
+    }
+]

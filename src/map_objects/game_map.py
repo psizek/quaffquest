@@ -20,6 +20,8 @@ from components.item import Item
 from components.stairs import Stairs
 from components.position import Position
 
+from components.item import get_item_classes
+
 
 class GameMap:
     def __init__(self, width, height, dungeon_level: int = 1):
@@ -38,6 +40,7 @@ class GameMap:
         rooms: List[Rect] = []
         num_rooms: int = 0
 
+        item_components = get_item_classes()
         center_of_last_room_x: int
         center_of_last_room_y: int
 
@@ -84,7 +87,7 @@ class GameMap:
                         self.create_v_tunnel(prev_y, new_y, prev_x)
                         self.create_h_tunnel(prev_x, new_x, new_y)
 
-                    self.place_entities(new_room, entities)
+                    self.place_entities(new_room, entities, item_components)
 
                 # finally, append the new room to the list
                 rooms.append(new_room)
@@ -111,7 +114,7 @@ class GameMap:
             self.tiles[x][y].blocked = False
             self.tiles[x][y].block_sight = False
 
-    def place_entities(self, room: Rect, entities):
+    def place_entities(self, room: Rect, entities, item_components):
         # Get a random number of monsters
         max_monsters_per_room = from_dungeon_level(
             [[2, 1], [3, 4], [5, 6]], self.dungeon_level)
@@ -163,8 +166,9 @@ class GameMap:
             if not any([entity for entity in entities if entity.pos.x == x and entity.pos.y == y]):
                 item_choice = random_choice_from_dict(item_chances)
                 if item_choice == 'healing_potion':
+                    item_component = item_components['HealingPotion'](1)
                     item = Entity('!', tcod.violet, 'Healing Potion', position=pos_comp,
-                                  render_order=RenderOrder.ITEM, item=Item(use_function=heal, amount=40))
+                                  render_order=RenderOrder.ITEM, item=item_component)
                 elif item_choice == 'sword':
                     equippable_component = Equippable(
                         EquipmentSlots.MAIN_HAND, power_bonus=3)
@@ -173,20 +177,18 @@ class GameMap:
                 elif item_choice == 'shield':
                     equippable_component = Equippable(
                         EquipmentSlots.OFF_HAND, defense_bonus=1)
-                    item = Entity('[', tcod.darker_orange, 'Shield', position=pos_comp, equippable=equippable_component)
+                    item = Entity('[', tcod.darker_orange, 'Shield',
+                                  position=pos_comp, equippable=equippable_component)
                 elif item_choice == 'fireball_scroll':
-                    item_component = Item(use_function=cast_fireball, targeting=True, targeting_message=Message(
-                        'Left Click a target tile to fireball.', tcod.light_cyan), damage=25, radius=3)
+                    item_component = item_components['FireballScroll'](1)
                     item = Entity('#', tcod.red, 'Fireball Scroll', position=pos_comp,
                                   render_order=RenderOrder.ITEM, item=item_component)
                 elif item_choice == 'confusion_scroll':
-                    item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message(
-                        'Left Click an enemy to confuse it', tcod.light_cyan))
+                    item_component = item_components['ConfuseScroll'](1)
                     item = Entity('#', tcod.light_pink, 'Confusion Scroll', position=pos_comp,
                                   render_order=RenderOrder.ITEM, item=item_component)
                 elif item_choice == 'lightning_scroll':
-                    item_component = Item(
-                        use_function=cast_lightning, damage=40, maximum_range=5)
+                    item_component = item_components['LightningScroll'](1)
                     item = Entity('#', tcod.yellow, 'Lightning Scroll', position=pos_comp, render_order=RenderOrder.ITEM,
                                   item=item_component)
                 entities.append(item)
